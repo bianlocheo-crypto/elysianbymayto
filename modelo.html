@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#111613">
-<meta name="description" content="Planta tipo y modelo 3D interactivo de las villas Elysian · Mayto.">
+<meta name="description" content="Planta tipo y modelo 3D interactivo de las villas Elysian · Mayto: dos niveles, cuatro residencias por villa.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Modelo 3D · Elysian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,6 +103,7 @@ ol.q b{font-weight:600}
         <dt>Plano</dt><dd>Planta tipo (unidad)</dd>
         <dt>Superficie</dt><dd>150.76 m² interiores</dd>
         <dt>Programa</dt><dd>2 rec. · 2 baños · 3 terrazas</dd>
+        <dt>Niveles</dt><dd>2 · 4 unidades por edificio</dd>
       </dl>
     </div>
   </header>
@@ -115,7 +116,7 @@ ol.q b{font-weight:600}
         <label class="tog"><input type="checkbox" id="bp-neigh" checked><span>Unidad vecina</span></label>
       </div>
     </div>
-    <p class="lede">La planta tipo que comparten Rosea, Viridis y Caerulea, con cotas en metros. Medidas aproximadas, sujetas al proyecto ejecutivo.</p>
+    <p class="lede">La planta tipo que comparten las cuatro residencias de cada villa, en planta baja y planta alta, con cotas en metros. Medidas aproximadas, sujetas al proyecto ejecutivo.</p>
     <div class="sheet"><svg id="bp" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano tipo blueprint de la unidad Elysian"></svg></div>
   </section>
 
@@ -139,6 +140,7 @@ ol.q b{font-weight:600}
       <label class="tog"><input type="checkbox" id="m-furn" checked><span>Mobiliario</span></label>
       <label class="tog"><input type="checkbox" id="m-labels" checked><span>Nombres de espacios</span></label>
       <label class="tog"><input type="checkbox" id="m-neigh" checked><span>Unidad vecina</span></label>
+      <label class="tog"><input type="checkbox" id="m-alta" checked><span>Planta alta</span></label>
       <label class="tog"><input type="checkbox" id="m-roof"><span>Techo</span></label>
     </div>
     <div class="viewport" id="viewport">
@@ -156,7 +158,8 @@ ol.q b{font-weight:600}
       </table></div>
       <p class="note">Medidas interiores a paño de muro. La huella bruta incluye muros y terrazas cubiertas, y es la cifra que coincide con los 150.76 m² declarados.</p>
     </div>
-  </section>
+    <div class="sec">
+</section>
 </div>
 
 <script>
@@ -172,7 +175,7 @@ ol.q b{font-weight:600}
     {r:[678,433,694,929]},
     {r:[336,181,368,193],ext:1,fac:1},{r:[419,181,447,193],ext:1,fac:1},{r:[498,181,516,193],ext:1,fac:1},
     {r:[336,245,368,256],ext:1},
-    {r:[336,917,368,929],ext:1,fac:1},{r:[419,917,447,929],ext:1,fac:1},{r:[498,917,526,929],ext:1,fac:1},{r:[577,917,606,929],ext:1,fac:1},{r:[656,917,694,929],fac:1},
+    {r:[336,917,368,929],ext:1,fac:1},{r:[498,917,526,929],ext:1,fac:1},{r:[656,917,694,929],fac:1}, // Rev. 3: two wide sea openings per unit
     {r:[336,433,473,440]},{r:[466,409,473,433]},
     {r:[336,499,473,505]},{r:[466,477,473,499]},
     {r:[552,433,623,440],ext:1,fac:1},{r:[657,433,694,440],fac:1},
@@ -191,7 +194,9 @@ ol.q b{font-weight:600}
   const WINDOWS = [[623,433,657,440]];
   // Floor-to-ceiling glazing and terrace glass railings
   const GLAZING = [[368,248,509,252],[348,856,509,860],[516,856,657,860]];
-  const RAILS = [[368,185,419,189],[447,185,498,189],[368,921,419,925],[447,921,498,925],[526,921,577,925],[606,921,656,925]];
+  const RAILS = [[368,185,419,189],[447,185,498,189],[368,921,498,925],[526,921,656,925]];
+  // Rev. 3: open plaster stair in the courtyard up to the upper unit's door; the landing also shelters the ground-floor door
+  const STAIR = {r:[556,200,594,395], landing:[516,395,594,433], risers:19};
   // Doors: hinge h, closed jamb c, open leaf end o
   const DOORS = [
     {n:'Acceso', h:[552,437], c:[516,437], o:[552,473], main:1},
@@ -238,7 +243,7 @@ ol.q b{font-weight:600}
     {t:'plant', c:[368,893], rad:18}, {t:'plant', c:[393,877], rad:11}, {t:'plant', c:[535,900], rad:12}, {t:'plant', c:[653,890], rad:18}
   ];
   const MIRROR = 1371; // x' = MIRROR - x  (neighbouring unit)
-  window.PLAN = {PX, OX, OY, X, Y, WALLS, LINTELS, BEAMS, WINDOWS, GLAZING, RAILS, DOORS, ROOMS, PATIO, FURN, MIRROR,
+  window.PLAN = {PX, OX, OY, X, Y, WALLS, LINTELS, BEAMS, WINDOWS, GLAZING, RAILS, STAIR, DOORS, ROOMS, PATIO, FURN, MIRROR,
     area: r => ((r[2]-r[0])*(r[3]-r[1]))/(PX*PX),
     dims: r => [((r[2]-r[0])/PX), ((r[3]-r[1])/PX)],
     gross: (((516-336)*(929-181)) + ((694-516)*(929-433)))/(PX*PX)
@@ -314,6 +319,17 @@ ol.q b{font-weight:600}
   }
   el('circle', {cx:pc[0], cy:pc[1], r:.18, fill:'none', stroke:FAINT, 'stroke-width':.03}, palm);
   txt('PATIO DE ACCESO', pr.x + pr.width/2 + 1.6, Y(395), {fs:.34, fill:FAINT, ls:.12});
+  // stair to the upper floor: treads, landing and the walking line
+  {
+    const st = P.STAIR, b = R(st.r), n = st.risers - 1, run = b.height / n;
+    el('rect', {...b, fill:'rgba(233,241,252,.06)', stroke:INK, 'stroke-width':.03});
+    for (let i = 1; i < n; i++) el('line', {x1:b.x, y1:b.y + run * i, x2:b.x + b.width, y2:b.y + run * i, stroke:FAINT, 'stroke-width':.018});
+    el('rect', {...R(st.landing), fill:'rgba(233,241,252,.06)', stroke:INK, 'stroke-width':.03});
+    const mx = b.x + b.width / 2;
+    el('line', {x1:mx, y1:b.y + .3, x2:mx, y2:b.y + b.height + .5, stroke:INK, 'stroke-width':.025});
+    el('path', {d:`M${mx - .14} ${b.y + b.height + .28} L${mx} ${b.y + b.height + .5} L${mx + .14} ${b.y + b.height + .28}`, fill:'none', stroke:INK, 'stroke-width':.025});
+    txt('SUBE', mx + .05, b.y + .1, {fs:.22, ls:.1, fill:FAINT});
+  }
 
   // Floors: terrace decking hatch
   const gT = el('g', {});
@@ -438,7 +454,7 @@ ol.q b{font-weight:600}
   L('PRIVATE ESTATES · MAYTO', -.55, {fs:.3, ls:.08, fill:FAINT});
   L('El privilegio de pertenecer.', .2, {fs:.34, ff:'Marcellus, Georgia, serif', ls:.01, fill:ROSE});
   hr(.85);
-  const rows = [['PLANO', 'PLANTA TIPO (UNIDAD)'], ['SUPERFICIE', '150.76 m² INTERIORES'], ['HUELLA BRUTA', `≈ ${P.gross.toFixed(2)} m²`], ['PROGRAMA', '2 REC. · 2 BAÑOS · 3 TERRAZAS'], ['ALTURA LIBRE', '3.00 m (SUPUESTA)'], ['LÁMINA', 'A-01'], ['REVISIÓN', 'REV. 1 · PARA APROBACIÓN'], ['FECHA', '22.11.2026']];
+  const rows = [['PLANO', 'PLANTA TIPO · PB Y PA'], ['SUPERFICIE', '150.76 m² POR UNIDAD'], ['HUELLA BRUTA', `≈ ${P.gross.toFixed(2)} m²`], ['PROGRAMA', '2 REC. · 2 BAÑOS · 3 TERRAZAS'], ['NIVELES', '2 · 4 UNIDADES POR EDIFICIO'], ['LÁMINA', 'A-01'], ['REVISIÓN', 'REV. 3 · PRESENTACIÓN'], ['FECHA', '23.11.2026']];
   rows.forEach(([k, v], i) => { const y = 1.6 + i * 1.05; L(k, y, {fs:.22, ls:.05, fill:FAINT}); L(v, y + .4, {fs:.3, ff:'IBM Plex Mono, monospace', ls:0}); });
   hr(10.2);
   // Legend
@@ -552,84 +568,122 @@ function cyl(cx, cz, r, y0, h, mat, group, seg = 24){
 let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
 // ---------- Structure ----------
-const H = 3.0, HP = 3.6; // interior ceiling; parapet of the exterior shell (one-level villa)
+// Rev. 3: two floors. The plan repeats upstairs, so each building holds four units (two per floor, in mirror).
+const H = 3.0, HP = 3.6, SLAB = .35, FL = H + SLAB; // ceiling; parapet; slab between floors; upper floor level
 const tallWall = w => w.ext || w.r[0] === 678;
-box([336,181,516,929], -.15, .15, M.floor, groups.struct, {shadow:false});
-box([516,433,694,929], -.15, .15, M.floor, groups.struct, {shadow:false});
-for (const w of P.WALLS) if (!w.fac) box(w.r, 0, tallWall(w) ? HP : H, wallMats, groups.struct, {cut:true});
-for (const l of P.LINTELS) if (l[0] !== 516) box(l, 2.4, H - 2.4, wallMats, groups.upper);
-
 // Arched facades. Arches sit exactly in the openings between the plan's columns.
-// Beach + bedroom-2 terraces follow "Fachada arcos"; the courtyard wall follows "Fachada acceso".
+// Sea facade: two wide arches per unit on the ground floor (low spring so they clear the slab) and one 7.48 m
+// elliptical arch per unit upstairs. Bedroom-2 terraces follow "Fachada arcos"; the courtyard wall "Fachada acceso".
 const FACADES = [
   {x0:336, x1:516, y0:181, y1:193, spring:2.1, arches:[[368,419],[447,498]]},
-  {x0:336, x1:694, y0:917, y1:929, spring:2.1, arches:[[368,419],[447,498],[526,577],[606,656]]},
+  {x0:336, x1:694, y0:917, y1:929, spring:1.15, arches:[[368,498],[526,656]], up:{spring:.9, rise:2.0, arches:[[368,656]]}},
   {x0:516, x1:694, y0:433, y1:440, spring:2.05, arches:[[519,551]], port:{c:641, v:1.6, r:.4}}
 ];
+const UP_RAILS = [[368,921,656,925]]; // upstairs the two sea terraces join into one behind the big arch
+const UP_WALL_END = 860; // so the wall between them stops at the glass line instead of splitting the arch
 function archShape(w, spring){
   const s = new THREE.Shape(); s.moveTo(0, 0); s.lineTo(w, 0); s.lineTo(w, spring); s.absarc(w/2, spring, w/2, 0, Math.PI, false); s.lineTo(0, 0); return s;
 }
-for (const f of FACADES){
-  const u = p => X(p) - X(f.x0), L = u(f.x1), d = Y(f.y1) - Y(f.y0);
-  const s = new THREE.Shape(); s.moveTo(0, 0);
-  for (const [a, b] of f.arches){
-    const ua = u(a), ub = u(b), r = (ub - ua)/2;
-    s.lineTo(ua, 0); s.lineTo(ua, f.spring); s.absarc(ua + r, f.spring, r, Math.PI, 0, true); s.lineTo(ub, 0);
+const levels = [0, FL].map(y => {
+  const L = {struct:new THREE.Group(), upper:new THREE.Group(), furn:new THREE.Group()};
+  for (const k in L){ L[k].position.y = y; groups[k].add(L[k]); }
+  return L;
+});
+function buildLevel(L, top){
+  const crown = top ? HP : FL; // ground-floor shell runs up to meet the upper floor
+  const floorMats = [M.wall, M.wall, M.floor, M.wall, M.wall, M.wall]; // edges read as plaster where they meet the walls
+  box([336,181,516,929], -.15, .15, floorMats, L.struct, {shadow:false});
+  box([516,433,694,929], -.15, .15, floorMats, L.struct, {shadow:false});
+  for (const w of P.WALLS) if (!w.fac){
+    const r = top && w.r[0] === 509 && w.r[3] === 929 ? [w.r[0], w.r[1], w.r[2], UP_WALL_END] : w.r;
+    box(r, 0, tallWall(w) ? crown : H, wallMats, L.struct, {cut:true});
   }
-  s.lineTo(L, 0); s.lineTo(L, HP); s.lineTo(0, HP); s.lineTo(0, 0);
-  if (f.port){ const hole = new THREE.Path(); hole.absarc(u(f.port.c), f.port.v, f.port.r, 0, Math.PI * 2, false); s.holes.push(hole); }
-  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(s, {depth:d, bevelEnabled:false, curveSegments:28}), M.wall);
-  m.position.set(X(f.x0), 0, Y(f.y0)); m.castShadow = m.receiveShadow = true; m.userData.h = HP;
-  cutables.push(m); groups.struct.add(m);
+  for (const l of P.LINTELS) if (l[0] !== 516) box(l, 2.4, H - 2.4, wallMats, L.upper);
+  for (const f0 of FACADES){
+    const f = top && f0.up ? {...f0, ...f0.up} : f0;
+    const u = p => X(p) - X(f.x0), len = u(f.x1), d = Y(f.y1) - Y(f.y0);
+    const s = new THREE.Shape(); s.moveTo(0, 0);
+    for (const [a, b] of f.arches){
+      const ua = u(a), ub = u(b), r = (ub - ua)/2;
+      s.lineTo(ua, 0); s.lineTo(ua, f.spring); s.absellipse(ua + r, f.spring, r, f.rise || r, Math.PI, 0, true); s.lineTo(ub, 0);
+    }
+    s.lineTo(len, 0); s.lineTo(len, crown); s.lineTo(0, crown); s.lineTo(0, 0);
+    if (f.port){ const hole = new THREE.Path(); hole.absarc(u(f.port.c), f.port.v, f.port.r, 0, Math.PI * 2, false); s.holes.push(hole); }
+    const m = new THREE.Mesh(new THREE.ExtrudeGeometry(s, {depth:d, bevelEnabled:false, curveSegments:36}), M.wall);
+    m.position.set(X(f.x0), 0, Y(f.y0)); m.castShadow = m.receiveShadow = true; m.userData.h = crown;
+    cutables.push(m); L.struct.add(m);
+  }
+  // Unit entrance: solid parota door shaped to its arch, closed
+  {
+    const [a, b] = FACADES[2].arches[0], w = X(b) - X(a) - .04;
+    const door = new THREE.Mesh(new THREE.ExtrudeGeometry(archShape(w, FACADES[2].spring), {depth:.06, bevelEnabled:false, curveSegments:28}), M.walnut);
+    door.position.set(X(a) + .02, 0, (Y(433) + Y(440))/2 - .03); door.castShadow = door.receiveShadow = true; door.userData.h = 2.5;
+    cutables.push(door); L.struct.add(door);
+  }
+  // Round window (porthole) with a brass ring and grille, where the plan has the pantry window
+  {
+    const p = FACADES[2].port, cx = X(p.c), cz = (Y(433) + Y(440))/2;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(p.r, .035, 10, 48), M.brass); ring.position.set(cx, p.v, cz); L.upper.add(ring);
+    const pane = new THREE.Mesh(new THREE.CircleGeometry(p.r, 40), M.glass); pane.material.side = THREE.DoubleSide; pane.position.set(cx, p.v, cz); L.upper.add(pane);
+    for (const dx of [-.2, 0, .2]){ const hh = 2 * Math.sqrt(p.r * p.r - dx * dx); boxM(cx + dx, cz, .02, .02, p.v - hh/2, hh, M.brass, L.upper); }
+    boxM(cx, cz, 2 * p.r, .02, p.v - .01, .02, M.brass, L.upper);
+  }
+  // Brick lattice (celosía) closing the light well beside bathroom 2
+  {
+    const z0 = Y(440), z1 = Y(499), cols = 6, rows = 29, step = (z1 - z0) / cols;
+    const im = new THREE.InstancedMesh(new THREE.BoxGeometry(.11, .065, step * .62), M.brick, cols * rows), mtx = new THREE.Matrix4();
+    let k = 0;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) mtx.makeTranslation(X(339), .06 + r * .117, z0 + step * (c + .5)), im.setMatrixAt(k++, mtx);
+    im.castShadow = im.receiveShadow = true; L.struct.add(im);
+    if (top) box([336,440,348,499], 3.45, HP - 3.45, wallMats, L.upper);
+  }
+  for (const g of P.GLAZING){
+    box(g, 0, H, M.glass, L.struct, {cut:true, shadow:false});
+    // slim dark mullions every ~1.4 m
+    const x0 = X(g[0]), x1 = X(g[2]), z = (Y(g[1]) + Y(g[3]))/2, n = Math.max(2, Math.round((x1 - x0)/1.4));
+    for (let i = 0; i <= n; i++) cutables.push(boxM(x0 + (x1 - x0) * i/n, z, .04, .06, 0, H, M.dark, L.struct)), cutables.at(-1).userData.h = H;
+  }
+  for (const r of top ? P.RAILS.filter(r => r[1] < 500).concat(UP_RAILS) : P.RAILS){
+    box(r, 0, 1.0, M.glass, L.struct, {shadow:false}); box([r[0], r[1]+1, r[2], r[3]-1], 1.0, .04, M.dark, L.struct);
+  }
+  // interior door leaves, left open as drawn (the entrance door is the arched one above)
+  for (const d of P.DOORS.filter(d => !d.main)){
+    const hx = X(d.h[0]), hz = Y(d.h[1]), ox = X(d.o[0]), oz = Y(d.o[1]);
+    const len = Math.hypot(ox - hx, oz - hz), g = new THREE.BoxGeometry(len, 2.35, .045); g.translate(len/2, 2.35/2, 0);
+    const m = new THREE.Mesh(g, M.oak);
+    m.position.set(hx, 0, hz); m.rotation.y = -Math.atan2(oz - hz, ox - hx); m.castShadow = m.receiveShadow = true;
+    m.userData.h = 2.35; cutables.push(m); L.struct.add(m);
+  }
+  // wet-area and terrace floors
+  for (const id of ['bano2', 'banoP']){ const r = P.ROOMS.find(x => x.id === id).r; box(r, 0, .006, M.wet, L.struct, {shadow:false}); }
+  for (const rm of P.ROOMS.filter(r => r.kind === 'terr')) box([rm.r[0], rm.r[1], rm.r[2], rm.r[3] + 6], 0, .01, M.brickFloor, L.struct, {shadow:false});
 }
-// Main entrance: solid parota door shaped to its arch, closed
-{
-  const [a, b] = FACADES[2].arches[0], w = X(b) - X(a) - .04;
-  const door = new THREE.Mesh(new THREE.ExtrudeGeometry(archShape(w, FACADES[2].spring), {depth:.06, bevelEnabled:false, curveSegments:28}), M.walnut);
-  door.position.set(X(a) + .02, 0, (Y(433) + Y(440))/2 - .03); door.castShadow = door.receiveShadow = true; door.userData.h = 2.5;
-  cutables.push(door); groups.struct.add(door);
-}
-// Round window (porthole) with a brass ring and grille, where the plan has the pantry window
-{
-  const p = FACADES[2].port, cx = X(p.c), cz = (Y(433) + Y(440))/2;
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(p.r, .035, 10, 48), M.brass); ring.position.set(cx, p.v, cz); groups.upper.add(ring);
-  const pane = new THREE.Mesh(new THREE.CircleGeometry(p.r, 40), M.glass); pane.material.side = THREE.DoubleSide; pane.position.set(cx, p.v, cz); groups.upper.add(pane);
-  for (const dx of [-.2, 0, .2]){ const hh = 2 * Math.sqrt(p.r * p.r - dx * dx); boxM(cx + dx, cz, .02, .02, p.v - hh/2, hh, M.brass, groups.upper); }
-  boxM(cx, cz, 2 * p.r, .02, p.v - .01, .02, M.brass, groups.upper);
-}
-// Brick lattice (celosía) closing the light well beside bathroom 2
-{
-  const z0 = Y(440), z1 = Y(499), cols = 6, rows = 29, step = (z1 - z0) / cols;
-  const im = new THREE.InstancedMesh(new THREE.BoxGeometry(.11, .065, step * .62), M.brick, cols * rows), mtx = new THREE.Matrix4();
-  let k = 0;
-  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) mtx.makeTranslation(X(339), .06 + r * .117, z0 + step * (c + .5)), im.setMatrixAt(k++, mtx);
-  im.castShadow = im.receiveShadow = true; groups.struct.add(im);
-  box([336,440,348,499], 3.45, HP - 3.45, wallMats, groups.upper);
-}
-// Flat roof over the whole unit, terraces included; hidden in the dollhouse views
+buildLevel(levels[0], false); buildLevel(levels[1], true);
+// Slab between the floors: the ground floor's ceiling, hidden with the upper floor to look into the ground floor
+const SLAB_R = [[348,193,509,917],[509,193,516,917],[516,440,678,917]];
+const slab = new THREE.Group(); groups.struct.add(slab);
+for (const r of SLAB_R) box(r, H, SLAB, [M.wall, M.wall, M.ceil, M.ceil, M.wall, M.wall], slab); // plaster edges, ceiling below
+// Flat roof over the upper unit, terraces included; hidden in the dollhouse views
 const roof = new THREE.Group(); scene.add(roof); roof.visible = false;
-box([348,193,509,917], H, .28, M.ceil, roof); box([509,193,516,917], H, .28, M.ceil, roof); box([516,440,678,917], H, .28, M.ceil, roof);
-for (const g of P.GLAZING){
-  box(g, 0, H, M.glass, groups.struct, {cut:true, shadow:false});
-  // slim dark mullions every ~1.4 m
-  const x0 = X(g[0]), x1 = X(g[2]), z = (Y(g[1]) + Y(g[3]))/2, n = Math.max(2, Math.round((x1 - x0)/1.4));
-  for (let i = 0; i <= n; i++) cutables.push(boxM(x0 + (x1 - x0) * i/n, z, .04, .06, 0, H, M.dark, groups.struct)), cutables.at(-1).userData.h = H;
+for (const r of SLAB_R) box(r, FL + H, .28, M.ceil, roof);
+// Open plaster stair in the courtyard, 1 m off the wing wall so the ground-floor door stays clear,
+// up to a landing in front of the upper door that also shelters the door below
+{
+  const st = P.STAIR, n = st.risers, rise = FL / n, x0 = X(st.r[0]), x1 = X(st.r[2]), z0 = Y(st.r[1]), z1 = Y(st.r[3]), run = (z1 - z0) / (n - 1);
+  const G = levels[0].struct;
+  for (let i = 0; i < n - 1; i++) boxM((x0 + x1)/2, z0 + run * (i + .5), x1 - x0, run + .01, 0, rise * (i + 1), M.wall, G);
+  box(st.landing, FL - .25, .25, M.wall, G);
+  box([st.landing[0] + 7, st.landing[1], st.r[0], st.landing[1] + 6], FL, 1.0, wallMats, G); // parapet over the passage
+  box([st.r[2] - 5, st.landing[1], st.r[2], st.landing[3]], FL, 1.0, wallMats, G);           // parapet on the open side
+  const rail = x => { // slim steel handrail along the flight
+    const yA = rise + .9, yB = FL + .9, l = Math.hypot(z1 - z0, yB - yA);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(.04, .05, l), M.dark);
+    m.position.set(x, (yA + yB)/2, (z0 + z1)/2); m.rotation.x = -Math.atan2(yB - yA, z1 - z0); m.castShadow = true; G.add(m);
+  };
+  rail(x0 + .03); rail(x1 - .03);
 }
-for (const r of P.RAILS){ box(r, 0, 1.0, M.glass, groups.struct, {shadow:false}); box([r[0], r[1]+1, r[2], r[3]-1], 1.0, .04, M.dark, groups.struct); }
-// interior door leaves, left open as drawn (the main door is the arched one above)
-for (const d of P.DOORS.filter(d => !d.main)){
-  const hx = X(d.h[0]), hz = Y(d.h[1]), ox = X(d.o[0]), oz = Y(d.o[1]);
-  const len = Math.hypot(ox - hx, oz - hz), g = new THREE.BoxGeometry(len, 2.35, .045); g.translate(len/2, 2.35/2, 0);
-  const m = new THREE.Mesh(g, d.main ? M.walnut : M.oak);
-  m.position.set(hx, 0, hz); m.rotation.y = -Math.atan2(oz - hz, ox - hx); m.castShadow = m.receiveShadow = true;
-  m.userData.h = 2.35; cutables.push(m); groups.struct.add(m);
-}
-// wet-area and terrace floors
-for (const id of ['bano2', 'banoP']){ const r = P.ROOMS.find(x => x.id === id).r; box(r, 0, .006, M.wet, groups.struct, {shadow:false}); }
-for (const rm of P.ROOMS.filter(r => r.kind === 'terr')) box([rm.r[0], rm.r[1], rm.r[2], rm.r[3] + 6], 0, .01, M.brickFloor, groups.struct, {shadow:false});
-
 // ---------- Furniture ----------
-const F = groups.furn;
+const F = levels[0].furn;
 for (const f of P.FURN){
   const r = f.r;
   if (r){
@@ -690,12 +744,12 @@ for (const f of P.FURN){
   }
 }
 
+for (const c of levels[0].furn.children) levels[1].furn.add(c.clone()); // the upper unit is furnished the same
+
 // ---------- Neighbouring unit: the plan's mirror image (x' = MIRROR - x) ----------
-const neighRoof = roof.clone();
-for (const g of [groups.struct, groups.upper, neighRoof]){
-  const c = g === neighRoof ? g : g.clone();
-  c.scale.x = -1; c.position.x = 2 * X(P.MIRROR / 2); groups.neigh.add(c);
-}
+const mirror = (g, keep) => { const c = keep ? g : g.clone(); c.scale.x = -1; c.position.x = 2 * X(P.MIRROR / 2); groups.neigh.add(c); return c; };
+for (const L of levels) L.mirror = [mirror(L.struct), mirror(L.upper)];
+const neighSlab = mirror(slab), neighRoof = mirror(roof.clone(), true);
 neighRoof.visible = false;
 
 // ---------- Site ----------
@@ -742,7 +796,7 @@ const tags = P.ROOMS.filter(r => !r.noTag).map(r => {
   const el = document.createElement('div'); el.className = 'tag';
   el.innerHTML = `${r.n}<small>${P.area(r.r).toFixed(1)} m²${r.sub ? ' · ' + r.sub : ''}</small>`;
   tagsEl.appendChild(el);
-  return {el, p:new THREE.Vector3((X(r.r[0]) + X(r.r[2]))/2, 1.1, (Y(r.r[1]) + Y(r.r[3]))/2)};
+  return {el, p:new THREE.Vector3((X(r.r[0]) + X(r.r[2]))/2, 1.1, (Y(r.r[1]) + Y(r.r[3]))/2)}; // y follows the floor in view, see syncFloors
 });
 const v = new THREE.Vector3();
 function placeTags(){
@@ -760,19 +814,30 @@ function placeTags(){
 const U = new THREE.Vector3(X(515), 0, Y(600)); // unit centre
 // Eye-level views turn the roof on; fov is vertical, in degrees
 const VIEWS = {
-  'v-aerea':    {pos:[U.x + 9, 15, U.z + 14], tgt:[U.x + .5, 0, U.z + .5], fov:38},
-  'v-planta':   {pos:[U.x + .5, 34, U.z + .01], tgt:[U.x + .5, 0, U.z], fov:38},
-  'v-llegada':  {pos:[X(600), 1.7, Y(181) - 16], tgt:[X(600), 1.9, Y(330)], fov:46, roof:1},
-  'v-patio':    {pos:[X(830), 1.65, Y(255)], tgt:[X(560), 1.6, Y(437)], fov:58, roof:1},
-  'v-dron':     {pos:[X(130), 21, Y(929) + 21], tgt:[X(685), 0, Y(560)], fov:40, roof:1},
-  'v-mar':      {pos:[X(600), 1.7, Y(929) + 13], tgt:[X(600), 1.9, Y(929)], fov:50, roof:1},
+  'v-aerea':    {pos:[U.x + 10, 20, U.z + 16], tgt:[U.x + .5, FL, U.z + .5], fov:38},
+  'v-planta':   {pos:[U.x + .5, 38, U.z + .01], tgt:[U.x + .5, FL, U.z], fov:38},
+  'v-llegada':  {pos:[X(685), 1.7, Y(181) - 19], tgt:[X(685), 3.1, Y(330)], fov:50, roof:1},
+  'v-patio':    {pos:[X(760), 1.65, Y(300)], tgt:[X(556), 2.3, Y(420)], fov:64, roof:1},
+  'v-dron':     {pos:[X(130), 24, Y(929) + 23], tgt:[X(685), 2, Y(560)], fov:40, roof:1},
+  'v-mar':      {pos:[X(685.5), 1.8, Y(929) + 20], tgt:[X(685.5), 3.4, Y(929)], fov:46, roof:1},
   'v-estancia': {pos:[X(600), 1.55, Y(640)], tgt:[X(597), 1.35, Y(929)], fov:62, roof:1},
   'v-recamara': {pos:[X(492), 1.55, Y(668)], tgt:[X(395), 1.3, Y(905)], fov:62, roof:1},
   'v-cocina':   {pos:[X(528), 1.6, Y(520)], tgt:[X(660), 1.2, Y(760)], fov:62, roof:1}
 };
-const roofBox = document.getElementById('m-roof');
-function setRoof(on){ roof.visible = neighRoof.visible = on; roofBox.checked = on; }
+const roofBox = document.getElementById('m-roof'), cutBox = document.getElementById('m-cut');
+const altaBox = document.getElementById('m-alta');
+let roofOn = false;
+// Which floors show: the upper floor (with its roof) can be hidden to look into the ground floor
+function syncFloors(){
+  const up = altaBox.checked && !cutBox.checked;
+  for (const g of [levels[1].struct, levels[1].upper, levels[1].furn, ...levels[1].mirror]) g.visible = up;
+  slab.visible = neighSlab.visible = (up || roofOn) && !cutBox.checked;
+  roof.visible = neighRoof.visible = roofOn && up;
+  for (const t of tags) t.p.y = up && !roofOn ? FL + 1.1 : 1.1;
+}
+function setRoof(on){ roofOn = on; roofBox.checked = on; syncFloors(); }
 roofBox.addEventListener('change', () => setRoof(roofBox.checked));
+altaBox.addEventListener('change', syncFloors);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let tween = null;
 function go(id, instant){
@@ -787,10 +852,10 @@ Object.keys(VIEWS).forEach(id => document.getElementById(id).addEventListener('c
 controls.addEventListener('start', () => { tween = null; });
 
 // ---------- Toggles ----------
-const cutBox = document.getElementById('m-cut');
 cutBox.addEventListener('change', () => {
   const on = cutBox.checked; groups.upper.visible = !on;
   for (const m of cutables){ const s = on ? Math.min(1, 1.2 / m.userData.h) : 1; m.scale.y = s; }
+  syncFloors();
 });
 document.getElementById('m-furn').addEventListener('change', e => { groups.furn.visible = e.target.checked; });
 document.getElementById('m-neigh').addEventListener('change', e => { groups.neigh.visible = e.target.checked; });
@@ -814,8 +879,8 @@ window.elysianLines = (mode, w = 2000, h = 1250) => {
   groups.site.visible = false; groups.furn.visible = false; roof.visible = neighRoof.visible = true; groups.neigh.visible = true;
   const cx = X(685.5), cz = (Y(181) + Y(929))/2, span = 20;
   const cam = new THREE.OrthographicCamera(-span * w/h / 2, span * w/h / 2, span / 2, -span / 2, .1, 200);
-  if (mode === 'mar'){ cam.position.set(cx, 1.8, Y(929) + 40); cam.lookAt(cx, 1.8, cz); cam.zoom = 1.9; }
-  else if (mode === 'acceso'){ cam.position.set(cx, 1.8, Y(181) - 40); cam.lookAt(cx, 1.8, cz); cam.zoom = 1.9; }
+  if (mode === 'mar'){ cam.position.set(cx, 3.5, Y(929) + 40); cam.lookAt(cx, 3.5, cz); cam.zoom = 1.6; }
+  else if (mode === 'acceso'){ cam.position.set(cx, 3.5, Y(181) - 40); cam.lookAt(cx, 3.5, cz); cam.zoom = 1.6; }
   else { cam.position.set(cx + 30, 26, cz + 30); cam.lookAt(cx, 0, cz); cam.zoom = .95; }
   cam.updateProjectionMatrix();
   const white = new THREE.MeshBasicMaterial({color:0xffffff, toneMapped:false, polygonOffset:true, polygonOffsetFactor:1, polygonOffsetUnits:1});

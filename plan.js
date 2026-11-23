@@ -10,7 +10,7 @@
     {r:[678,433,694,929]},
     {r:[336,181,368,193],ext:1,fac:1},{r:[419,181,447,193],ext:1,fac:1},{r:[498,181,516,193],ext:1,fac:1},
     {r:[336,245,368,256],ext:1},
-    {r:[336,917,368,929],ext:1,fac:1},{r:[419,917,447,929],ext:1,fac:1},{r:[498,917,526,929],ext:1,fac:1},{r:[577,917,606,929],ext:1,fac:1},{r:[656,917,694,929],fac:1},
+    {r:[336,917,368,929],ext:1,fac:1},{r:[498,917,526,929],ext:1,fac:1},{r:[656,917,694,929],fac:1}, // Rev. 3: two wide sea openings per unit
     {r:[336,433,473,440]},{r:[466,409,473,433]},
     {r:[336,499,473,505]},{r:[466,477,473,499]},
     {r:[552,433,623,440],ext:1,fac:1},{r:[657,433,694,440],fac:1},
@@ -29,7 +29,9 @@
   const WINDOWS = [[623,433,657,440]];
   // Floor-to-ceiling glazing and terrace glass railings
   const GLAZING = [[368,248,509,252],[348,856,509,860],[516,856,657,860]];
-  const RAILS = [[368,185,419,189],[447,185,498,189],[368,921,419,925],[447,921,498,925],[526,921,577,925],[606,921,656,925]];
+  const RAILS = [[368,185,419,189],[447,185,498,189],[368,921,498,925],[526,921,656,925]];
+  // Rev. 3: open plaster stair in the courtyard up to the upper unit's door; the landing also shelters the ground-floor door
+  const STAIR = {r:[556,200,594,395], landing:[516,395,594,433], risers:19};
   // Doors: hinge h, closed jamb c, open leaf end o
   const DOORS = [
     {n:'Acceso', h:[552,437], c:[516,437], o:[552,473], main:1},
@@ -76,7 +78,7 @@
     {t:'plant', c:[368,893], rad:18}, {t:'plant', c:[393,877], rad:11}, {t:'plant', c:[535,900], rad:12}, {t:'plant', c:[653,890], rad:18}
   ];
   const MIRROR = 1371; // x' = MIRROR - x  (neighbouring unit)
-  window.PLAN = {PX, OX, OY, X, Y, WALLS, LINTELS, BEAMS, WINDOWS, GLAZING, RAILS, DOORS, ROOMS, PATIO, FURN, MIRROR,
+  window.PLAN = {PX, OX, OY, X, Y, WALLS, LINTELS, BEAMS, WINDOWS, GLAZING, RAILS, STAIR, DOORS, ROOMS, PATIO, FURN, MIRROR,
     area: r => ((r[2]-r[0])*(r[3]-r[1]))/(PX*PX),
     dims: r => [((r[2]-r[0])/PX), ((r[3]-r[1])/PX)],
     gross: (((516-336)*(929-181)) + ((694-516)*(929-433)))/(PX*PX)
@@ -152,6 +154,17 @@
   }
   el('circle', {cx:pc[0], cy:pc[1], r:.18, fill:'none', stroke:FAINT, 'stroke-width':.03}, palm);
   txt('PATIO DE ACCESO', pr.x + pr.width/2 + 1.6, Y(395), {fs:.34, fill:FAINT, ls:.12});
+  // stair to the upper floor: treads, landing and the walking line
+  {
+    const st = P.STAIR, b = R(st.r), n = st.risers - 1, run = b.height / n;
+    el('rect', {...b, fill:'rgba(233,241,252,.06)', stroke:INK, 'stroke-width':.03});
+    for (let i = 1; i < n; i++) el('line', {x1:b.x, y1:b.y + run * i, x2:b.x + b.width, y2:b.y + run * i, stroke:FAINT, 'stroke-width':.018});
+    el('rect', {...R(st.landing), fill:'rgba(233,241,252,.06)', stroke:INK, 'stroke-width':.03});
+    const mx = b.x + b.width / 2;
+    el('line', {x1:mx, y1:b.y + .3, x2:mx, y2:b.y + b.height + .5, stroke:INK, 'stroke-width':.025});
+    el('path', {d:`M${mx - .14} ${b.y + b.height + .28} L${mx} ${b.y + b.height + .5} L${mx + .14} ${b.y + b.height + .28}`, fill:'none', stroke:INK, 'stroke-width':.025});
+    txt('SUBE', mx + .05, b.y + .1, {fs:.22, ls:.1, fill:FAINT});
+  }
 
   // Floors: terrace decking hatch
   const gT = el('g', {});
@@ -276,7 +289,7 @@
   L('PRIVATE ESTATES · MAYTO', -.55, {fs:.3, ls:.08, fill:FAINT});
   L('El privilegio de pertenecer.', .2, {fs:.34, ff:'Marcellus, Georgia, serif', ls:.01, fill:ROSE});
   hr(.85);
-  const rows = [['PLANO', 'PLANTA TIPO (UNIDAD)'], ['SUPERFICIE', '150.76 m² INTERIORES'], ['HUELLA BRUTA', `≈ ${P.gross.toFixed(2)} m²`], ['PROGRAMA', '2 REC. · 2 BAÑOS · 3 TERRAZAS'], ['ALTURA LIBRE', '3.00 m (SUPUESTA)'], ['LÁMINA', 'A-01'], ['REVISIÓN', 'REV. 2 · PRESENTACIÓN'], ['FECHA', '22.11.2026']];
+  const rows = [['PLANO', 'PLANTA TIPO · PB Y PA'], ['SUPERFICIE', '150.76 m² POR UNIDAD'], ['HUELLA BRUTA', `≈ ${P.gross.toFixed(2)} m²`], ['PROGRAMA', '2 REC. · 2 BAÑOS · 3 TERRAZAS'], ['NIVELES', '2 · 4 UNIDADES POR EDIFICIO'], ['LÁMINA', 'A-01'], ['REVISIÓN', 'REV. 3 · PRESENTACIÓN'], ['FECHA', '23.11.2026']];
   rows.forEach(([k, v], i) => { const y = 1.6 + i * 1.05; L(k, y, {fs:.22, ls:.05, fill:FAINT}); L(v, y + .4, {fs:.3, ff:'IBM Plex Mono, monospace', ls:0}); });
   hr(10.2);
   // Legend
