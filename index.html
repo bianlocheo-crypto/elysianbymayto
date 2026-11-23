@@ -31,6 +31,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important} /* the artifact host adds this; standalone hosting needs it too */
 body{background:var(--night);color:var(--paper-ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
 .gutter{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 button{font:inherit;color:inherit}
