@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="El privilegio de pertenecer. Tres villas de un nivel sobre la sierra de Mayto, a 700 m del Pacífico.">
+<meta name="theme-color" content="#15100f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Elysian Private Estates · Mayto">
+<meta property="og:description" content="El privilegio de pertenecer. Rosea, Viridis y Caerulea: tres villas de un nivel sobre la sierra, a 700 m del Pacífico.">
+<meta property="og:image" content="https://elysianbymayto.vercel.app/og.jpg">
+<meta property="og:url" content="https://elysianbymayto.vercel.app">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Elysian Private Estates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@1,500&family=Marcellus&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&display=swap">
+<style>
+/* Layout: a film run (sea → hill landing, pick a villa, arrival flight, swipeable rooms, into the TV)
+   that lands on a horizontally scrolling dossier of slanted panels. Single committed look. */
+:root{
+  --night:#15100f; --night-2:#211816; --ink:#2b1d19; --sand:#f1e8df; --sand-2:#e8dccf; --clay:#c98f80; --clay-deep:#9a6457;
+  --glow:#f6dcb4; --bp:#173f73; --paper-ink:#f7efe8; --muted:#8d7a73;
+  --z-priv:#bf5a3f; --z-day:#3b6aa8; --z-serv:#a87f24; --z-terr:#6b3f7f; /* validated categorical order */
+  --f-display:"Marcellus", "Cormorant Garamond", Georgia, serif;
+  --f-body:"Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --f-word:"Cinzel", "Marcellus", Georgia, serif;
+  --f-mayto:"Cormorant Garamond", Georgia, serif; /* stand-in until the Mayto font file arrives */
+  --rosea:#cf9384; --viridis:#9aa684; --caerulea:#5b7fb0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--night);color:var(--paper-ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+.gutter{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.fill-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;max-width:none}
+
+/* ---------- Landing ---------- */
+.landing{position:relative;height:max(100svh, 560px);overflow:hidden;background:#0d0b0a;touch-action:pan-y}
+.landing .fill-video{transition:object-position .9s cubic-bezier(.6,0,.2,1)}
+.l-hint{position:absolute;z-index:3;left:50%;top:calc(64px + env(safe-area-inset-top, 0px));translate:-50% 0;display:flex;align-items:center;gap:10px;font:500 11px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#f3e4d8;opacity:0;transition:opacity .8s ease;pointer-events:none;white-space:nowrap}
+.l-hint i{width:6px;height:6px;border-radius:50%;border:1px solid #f3e4d8}
+.l-hint i.on{background:#f3e4d8}
+.landing.ready.pans .l-hint{opacity:.9}
+.landing::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom, rgba(10,8,8,.45), transparent 22%, transparent 62%, rgba(10,8,8,.6))}
+.l-top{position:absolute;inset:0 0 auto;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:calc(18px + env(safe-area-inset-top, 0px))}
+.mark{font-family:var(--f-word);font-weight:600;letter-spacing:.34em;font-size:17px}
+.l-top nav{display:flex;gap:18px}
+.l-top a{color:#f3e4d8;font:500 12px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding-bottom:3px;border-bottom:1px solid transparent}
+.l-top a:hover{border-color:currentColor}
+.l-title{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom, 0px));z-index:3;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:18px}
+.l-title h1{font-family:var(--f-word);font-weight:500;font-size:clamp(56px,11vw,168px);line-height:.85;letter-spacing:.08em;margin:0}
+.l-title p{margin:8px 0 0;font-size:clamp(15px,1.5vw,19px);color:#efe1d6;max-width:40ch}
+.villas{display:flex;gap:8px;flex-wrap:wrap}
+.vbtn{display:inline-flex;align-items:center;gap:10px;background:rgba(18,13,12,.5);border:1px solid rgba(251,239,227,.45);border-radius:2px;padding:11px 14px;cursor:pointer;font:600 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase}
+.vbtn i{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.6)}
+.vbtn:hover{border-color:#fff;background:rgba(18,13,12,.7)}
+.pin{position:absolute;z-index:2;translate:-50% -100%;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transition:opacity .8s ease, left .9s cubic-bezier(.6,0,.2,1);pointer-events:none;background:none;border:0;padding:0;cursor:pointer}
+.landing.ready .pin{opacity:1;pointer-events:auto}
+.pin span{font:600 11px/1 var(--f-body);letter-spacing:.22em;text-transform:uppercase;background:rgba(18,13,12,.6);border:1px solid rgba(251,239,227,.5);padding:8px 10px;border-radius:2px;white-space:nowrap}
+.pin b{width:1px;height:34px;background:linear-gradient(#fbefe3, rgba(251,239,227,0))}
+.pin:hover span{background:var(--glow);color:var(--ink)}
+.replay{background:none;border:0;color:#e6d6ca;font:500 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:6px 0;text-decoration:underline;text-underline-offset:4px}
+.veil{position:fixed;inset:0;opacity:0;pointer-events:none;z-index:60;background:var(--glow);transition:opacity .45s ease}
+.veil.on{opacity:1}
+
+/* ---------- Loader ---------- */
+.loader{position:fixed;inset:0;z-index:90;background:var(--night);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;transition:opacity .7s ease, visibility .7s}
+.loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.ld-word{position:relative;font-family:var(--f-word);font-weight:600;font-size:clamp(46px,12vw,176px);letter-spacing:.14em;line-height:1;padding-left:.14em}
+.ld-outline{color:transparent;-webkit-text-stroke:1px rgba(247,239,232,.42)}
+.ld-fill{position:absolute;inset:0;padding-left:.14em;color:transparent;background:linear-gradient(90deg, var(--rosea) 0 29%, var(--viridis) 29% 55.5%, var(--caerulea) 55.5% 100%);
+  -webkit-background-clip:text;background-clip:text;clip-path:inset(0 calc(100% - var(--p, 0%)) 0 0);transition:clip-path .3s linear}
+.ld-sub{font-family:var(--f-mayto);font-style:italic;font-weight:500;font-size:clamp(18px,2vw,26px);letter-spacing:.06em;color:#eadbd0}
+.ld-pct{font:500 13px/1 var(--f-mono);letter-spacing:.16em;color:#bfae9f;font-variant-numeric:tabular-nums;margin-top:10px}
+.ld-note{font:500 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:#8d7a73;min-height:11px}
+@media (prefers-reduced-motion: reduce){ .ld-fill{transition:none} }
+
+/* ---------- Tour ---------- */
+.tour{position:relative;height:max(100svh, 560px);overflow:hidden;background:#000;touch-action:pan-y;user-select:none}
+.tour-stage{position:absolute;inset:0;transform-origin:50% 45%}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top, rgba(12,9,8,.6), rgba(12,9,8,0) 40%)}
+.tour{cursor:grab}
+.tour:active{cursor:grabbing}
+.cap{position:absolute;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom, 0px));z-index:2;display:flex;flex-direction:column;gap:6px;opacity:0;translate:0 14px;transition:opacity .45s ease, translate .45s ease;pointer-events:none}
+.cap.show{opacity:1;translate:0 0;pointer-events:auto}
+.cap .idx{font:500 12px/1 var(--f-mono);letter-spacing:.12em;color:var(--glow)}
+.cap h2{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,6.2vw,84px);line-height:1;margin:0;text-wrap:balance}
+.cap p{margin:0;font-size:clamp(14px,1.4vw,17px);color:#eadbd0;max-width:52ch}
+.cap .go{margin-top:12px;align-self:flex-start;background:var(--glow);color:var(--ink);border:0;border-radius:2px;padding:12px 18px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:12px;cursor:pointer}
+.arrival{position:absolute;left:0;right:0;top:calc(84px + env(safe-area-inset-top, 0px));z-index:2;font-family:var(--f-word);font-weight:500;letter-spacing:.12em;font-size:clamp(30px,4.6vw,64px);opacity:0;transition:opacity .8s ease;pointer-events:none}
+.arrival.show{opacity:1}
+.gesture-hint{position:absolute;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(64px + env(safe-area-inset-bottom, 0px));font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#e7d8cc;opacity:.85}
+.tour-ui{position:absolute;inset:0;pointer-events:none;z-index:3;transition:opacity .4s ease}
+.tour.entering .tour-ui,.tour.entering .cap{opacity:0 !important}
+.t-top{position:absolute;inset:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:calc(16px + env(safe-area-inset-top, 0px));pointer-events:auto}
+.t-top .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:8px;background:rgba(20,14,12,.45);border:1px solid rgba(251,239,227,.35);border-radius:2px;padding:8px 10px;font:500 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:#fbefe3}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="true"]{background:#fbefe3;color:var(--ink);border-color:#fbefe3}
+.arrow{position:absolute;top:50%;translate:0 -50%;width:48px;height:48px;border-radius:50%;border:1px solid rgba(251,239,227,.5);background:rgba(20,14,12,.35);cursor:pointer;pointer-events:auto;display:grid;place-items:center}
+.arrow svg{width:18px;height:18px;fill:none;stroke:#fbefe3;stroke-width:1.6}
+.arrow.prev{left:max(12px, env(safe-area-inset-left, 0px))} .arrow.next{right:max(12px, env(safe-area-inset-right, 0px))}
+.steps{position:absolute;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom, 0px));display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;pointer-events:auto}
+.step{background:none;border:0;padding:10px 0 0;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:8px;min-width:0}
+.step[hidden]{display:none}
+.step .bar{height:2px;background:rgba(251,239,227,.28);position:relative;overflow:hidden}
+.step .bar i{position:absolute;inset:0 auto 0 0;width:0;background:#fbefe3}
+.step .lbl{font:500 11px/1.2 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:#d9c8bc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step[aria-current="true"] .lbl{color:#fff}
+.screen-layer{position:absolute;z-index:4;overflow:hidden;background:var(--bp);opacity:0;pointer-events:none}
+.screen-layer img{width:100%;height:100%;object-fit:fill;display:block}
+.screen-layer.on{opacity:1}
+@media (max-width:720px){ .step .lbl{display:none} .arrow{display:none} .gesture-hint{bottom:calc(46px + env(safe-area-inset-bottom, 0px))} .cap{bottom:calc(72px + env(safe-area-inset-bottom, 0px))} .l-title{flex-direction:column;align-items:flex-start} }
+
+/* ---------- Dossier: horizontal run of slanted panels ---------- */
+.dossier{position:relative;background:var(--sand);color:var(--ink)}
+.track-wrap{position:relative}
+.sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+.track{display:flex;height:100%}
+.panel{--cut:7vw;position:relative;flex:0 0 auto;width:86vw;height:100%;margin-right:calc(var(--cut) * -1);
+  clip-path:polygon(var(--cut) 0, 100% 0, calc(100% - var(--cut)) 100%, 0 100%);
+  padding:clamp(28px,6vh,72px) calc(var(--cut) + 3vw);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(20px,3vw,48px);align-items:center}
+.panel:first-child{clip-path:polygon(0 0, 100% 0, calc(100% - var(--cut)) 100%, 0 100%);padding-left:max(24px, 4vw)}
+.panel:last-child{margin-right:0;clip-path:polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%)}
+.p-bp{background:var(--bp);color:#e9f1fc;grid-template-columns:1fr;align-content:center;width:100vw}
+.p-sand{background:var(--sand)} .p-sand2{background:var(--sand-2)} .p-clay{background:var(--clay);color:var(--ink)} .p-ink{background:var(--night-2);color:var(--paper-ink)}
+.p-night{background:var(--night);color:var(--paper-ink);grid-template-columns:1fr;text-align:center;justify-items:center;width:80vw}
+.txt{display:flex;flex-direction:column;gap:14px;min-width:0}
+.txt .eyebrow{color:var(--clay-deep)}
+.p-clay .txt .eyebrow{color:var(--ink)} .p-ink .txt .eyebrow,.p-night .eyebrow{color:var(--clay)}
+.txt h3{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,3.6vw,56px);line-height:1.02;margin:0;text-wrap:balance}
+.txt p{margin:0;max-width:52ch;font-size:clamp(14px,1.15vw,17px)}
+.p-ink .txt p{color:#e2d3c9}
+.fig{min-width:0;display:flex;flex-direction:column;gap:12px;max-height:100%}
+.fig img{display:block;width:100%;height:auto;max-width:100%}
+.reveal > *{opacity:0;translate:0 24px;transition:opacity .8s ease, translate .8s ease}
+.panel.in .reveal > *{opacity:1;translate:0 0}
+.panel.in .reveal > *:nth-child(2){transition-delay:.12s} .panel.in .reveal > *:nth-child(3){transition-delay:.24s} .panel.in .reveal > *:nth-child(4){transition-delay:.36s} .panel.in .reveal > *:nth-child(5){transition-delay:.48s}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:rgba(43,29,25,.18);border:1px solid rgba(43,29,25,.18)}
+.stat{background:var(--sand);padding:14px 12px;display:flex;flex-direction:column;gap:4px}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:clamp(20px,2.1vw,30px);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay-deep)}
+.photo{position:relative} .photo figcaption{font:500 11px/1.3 var(--f-mono);letter-spacing:.06em;margin-top:6px;color:var(--clay-deep)}
+.p-ink .photo figcaption{color:#c9b4a8}
+.ink-draw{background:transparent}
+.principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:6px}
+.principles div{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.principles svg{width:34px;height:34px;fill:none;stroke:var(--ink);stroke-width:1.4}
+.principles b{font-weight:600;letter-spacing:.04em}
+.bp-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px}
+.bp-head h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,3.4vw,48px);margin:0;line-height:1.05}
+.bp-head .eyebrow{color:#9fc2ea}
+.toggles{display:flex;gap:16px;flex-wrap:wrap}
+.toggles label{display:inline-flex;gap:8px;align-items:center;font-size:13px;cursor:pointer}
+.toggles input{accent-color:#9fd3ff;width:16px;height:16px;margin:0}
+.sheet{overflow:auto;max-height:calc(100svh - 190px);border:1px solid rgba(233,241,252,.25)}
+.sheet svg{display:block;width:100%;height:auto;min-width:640px}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.trio img,.duo img{aspect-ratio:4/5;object-fit:cover;height:auto}
+.palettes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pal{display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:.04em}
+.pal .sw{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;height:44px;border-radius:2px;overflow:hidden}
+.pal b{font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:2px;display:inline-block}
+.tip{position:fixed;z-index:70;pointer-events:none;background:var(--ink);color:var(--sand);font:500 12px/1.35 var(--f-body);padding:7px 9px;border-radius:3px;opacity:0;transition:opacity .12s;white-space:nowrap}
+.areas-table summary{cursor:pointer;font:600 12px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--clay-deep);padding:6px 0}
+.areas-wrap{max-height:30vh;overflow:auto}
+table.areas{width:100%;border-collapse:collapse;font-size:13px}
+table.areas th,table.areas td{text-align:left;padding:5px 6px;border-bottom:1px solid rgba(43,29,25,.15)}
+table.areas th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay-deep);font-weight:500}
+table.areas td.n,table.areas th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.areas tr.group td{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-deep);border-bottom:0;padding-top:10px}
+table.areas tr.total td{font-weight:600}
+.cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.cta a,.cta button{background:none;border:1px solid rgba(251,239,227,.5);color:#fbefe3;border-radius:2px;padding:13px 18px;text-decoration:none;font:600 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.cta a.primary{background:var(--glow);color:var(--ink);border-color:var(--glow)}
+.p-night h2{font-family:var(--f-display);font-weight:400;font-size:clamp(40px,6vw,92px);line-height:1;margin:0;text-wrap:balance}
+.fine{font-size:12px;color:var(--muted);max-width:60ch;margin:0}
+.progress{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom, 0px));translate:-50% 0;z-index:5;display:flex;gap:6px}
+.progress i{width:28px;height:2px;background:rgba(43,29,25,.25)}
+.progress i.on{background:var(--ink)}
+.scroll-hint{position:absolute;right:max(20px, env(safe-area-inset-right, 0px));bottom:calc(10px + env(safe-area-inset-bottom, 0px));z-index:5;font:500 11px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:.7}
+@media (max-width:860px){
+  .sticky{position:relative;height:auto}
+  .track{flex-direction:column;transform:none !important}
+  .panel,.p-bp,.p-night{width:100%;margin:0;clip-path:none;grid-template-columns:1fr;padding:56px max(16px, env(safe-area-inset-left, 0px)) 56px max(16px, env(safe-area-inset-right, 0px));height:auto}
+  .panel:first-child,.panel:last-child{clip-path:none}
+  .panel.p-clay,.panel.p-sand2{clip-path:polygon(0 4vw, 100% 0, 100% 100%, 0 100%)}
+  .stats,.principles,.palettes{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .progress,.scroll-hint{display:none}
+  .reveal > *{opacity:1;translate:0 0}
+}
+@media (prefers-reduced-motion: reduce){ .reveal > *{opacity:1;translate:0 0;transition:none} .cap,.veil,.pin{transition:none} }
+</style>
+
+<div class="loader" id="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Cargando Elysian">
+  <div class="ld-word" aria-hidden="true"><span class="ld-outline">ELYSIAN</span><span class="ld-fill">ELYSIAN</span></div>
+  <div class="ld-sub">Residences by Mayto</div>
+  <div class="ld-pct"><span id="ldPct">0</span>%</div>
+  <div class="ld-note" id="ldNote"></div>
+</div>
+
+<!-- ===================== LANDING ===================== -->
+<header class="landing" id="inicio">
+  <video class="fill-video" id="flight" muted playsinline preload="none" poster="media/landing-first.jpg"></video>
+  <img class="fill-video" id="flightEnd" src="media/landing-last.jpg" alt="Las villas Rosea, Viridis y Caerulea de Elysian sobre una ladera de selva baja con vista al Pacífico." hidden>
+  <div class="l-top gutter">
+    <span class="mark">ELYSIAN</span>
+    <nav aria-label="Secciones"><a href="#recorrido" data-villa="rosa">Recorrido</a><a href="#proyecto">Proyecto</a></nav>
+  </div>
+  <div class="l-hint" aria-hidden="true"><i></i><i class="on"></i><i></i><span>Desliza · tres villas</span></div>
+  <button class="pin" data-villa="rosa" data-x=".25" data-y=".465" type="button"><span>Rosea</span><b></b></button>
+  <button class="pin" data-villa="verde" data-x=".52" data-y=".465" type="button"><span>Viridis</span><b></b></button>
+  <button class="pin" data-villa="azul" data-x=".77" data-y=".465" type="button"><span>Caerulea</span><b></b></button>
+  <div class="l-title gutter">
+    <div>
+      <h1>ELYSIAN</h1>
+      <p>Private Estates · Mayto, Jalisco. Rosea, Viridis y Caerulea: villas de un nivel sobre la sierra, a 700 m del Pacífico.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+      <div class="villas" role="group" aria-label="Elige una villa">
+        <button class="vbtn" data-villa="rosa" type="button"><i style="background:#cf9384"></i>Rosea</button>
+        <button class="vbtn" data-villa="verde" type="button"><i style="background:#9aa684"></i>Viridis</button>
+        <button class="vbtn" data-villa="azul" type="button"><i style="background:#5b7fb0"></i>Caerulea</button>
+      </div>
+      <button class="replay" id="replayFlight" type="button">Repetir el vuelo desde el mar</button>
+    </div>
+  </div>
+</header>
+<div class="veil" id="veil" aria-hidden="true"></div>
+
+<!-- ===================== TOUR ===================== -->
+<section class="tour" id="recorrido" aria-roledescription="recorrido interactivo" aria-label="Recorrido por la villa. Desliza, arrastra o usa las flechas para avanzar.">
+  <div class="tour-stage" id="tourStage">
+    <video class="fill-video" id="tourVideo" muted playsinline preload="auto"></video>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="arrival gutter" id="arrival" aria-hidden="true"></div>
+    <figcaption class="cap gutter" id="cap" aria-live="polite"><span class="idx"></span><h2></h2><p></p><button class="go" type="button" data-enter hidden>Entrar al proyecto</button></figcaption>
+  </div>
+  <div class="screen-layer" id="screenLayer" aria-hidden="true"><img src="media/planta-a01.jpg" alt=""></div>
+  <div class="tour-ui">
+    <div class="t-top gutter">
+      <span class="mark">ELYSIAN</span>
+      <div class="acts" role="group" aria-label="Villa">
+        <button class="chip" data-chip="rosa" type="button" aria-pressed="true"><i style="background:#cf9384"></i>Rosea</button>
+        <button class="chip" data-chip="verde" type="button" aria-pressed="false"><i style="background:#9aa684"></i>Viridis</button>
+        <button class="chip" data-chip="azul" type="button" aria-pressed="false"><i style="background:#5b7fb0"></i>Caerulea</button>
+        <button class="chip" id="enterBtn" type="button">Ver el proyecto</button>
+      </div>
+    </div>
+    <button class="arrow prev" id="prevBtn" type="button" aria-label="Espacio anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="arrow next" id="nextBtn" type="button" aria-label="Espacio siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <span class="gesture-hint" aria-hidden="true">Desliza o arrastra · la cámara te sigue</span>
+    <div class="steps gutter" id="steps" role="tablist" aria-label="Espacios"></div>
+  </div>
+</section>
+
+<!-- ===================== DOSSIER ===================== -->
+<main class="dossier" id="proyecto">
+  <div class="track-wrap" id="trackWrap">
+    <div class="sticky">
+      <div class="track" id="track">
+
+        <section class="panel p-bp" aria-labelledby="h-a01">
+          <div class="reveal" style="display:flex;flex-direction:column;gap:16px;min-width:0">
+            <div class="bp-head">
+              <div><div class="eyebrow">Lámina A-01 · Planta tipo</div><h2 id="h-a01">Del recorrido al plano</h2></div>
+              <div class="toggles"><label><input type="checkbox" id="bp-furn" checked>Mobiliario</label><label><input type="checkbox" id="bp-neigh" checked>Unidad vecina</label></div>
+            </div>
+            <div class="sheet"><svg id="bp" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano de la planta tipo de Elysian con cotas en metros"></svg></div>
+          </div>
+        </section>
+
+        <section class="panel p-sand" aria-labelledby="h-an">
+          <div class="txt reveal">
+            <div class="eyebrow">01 · Análisis</div>
+            <h3 id="h-an">Una ladera a 700 m del Pacífico</h3>
+            <p>Cada villa es una unidad de 150.76 m² en un nivel. Las unidades se agrupan en pares en espejo alrededor de un patio con palma, en la sierra de Mayto, y miran por encima de la planicie costera hacia el mar. 20°15′38″ N · 105°34′36″ O.</p>
+            <div class="stats">
+              <div class="stat"><b>700 m</b><span>al Pacífico</span></div>
+              <div class="stat"><b>3</b><span>Villas</span></div>
+              <div class="stat"><b>150.76</b><span>m² por villa</span></div>
+              <div class="stat"><b>2</b><span>Recámaras</span></div>
+              <div class="stat"><b>4</b><span>Arcos al mar</span></div>
+              <div class="stat"><b>1</b><span>Nivel</span></div>
+            </div>
+          </div>
+          <div class="fig reveal">
+            <svg class="chart" id="siteSection" viewBox="0 0 1000 300" role="img" aria-label="Corte esquemático del sitio: mar, playa, planicie costera y ladera con las tres villas a 700 metros de la costa"></svg>
+            <figure class="photo" style="margin:0"><img src="media/vista-real-sitio.jpg" alt="Vista real desde el terreno: selva baja en primer plano y el mar en el horizonte." style="aspect-ratio:16/7;object-fit:cover" loading="lazy"><figcaption>Vista real desde el terreno</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="panel p-clay" aria-labelledby="h-idea">
+          <div class="txt reveal">
+            <div class="eyebrow">02 · Idea rectora</div>
+            <h3 id="h-idea">Los Campos Elíseos, hechos de barro y luz</h3>
+            <p>En la mitología griega, los Campos Elíseos eran un lugar reservado a unos pocos. Elysian lo traduce en volúmenes monolíticos de estuco, arcos que enmarcan el mar y patios que guardan la intimidad.</p>
+            <div class="principles">
+              <div><svg viewBox="0 0 34 34"><path d="M7 31V15a10 10 0 0 1 20 0v16"/><path d="M3 31h28"/></svg><b>El arco</b>Enmarca el mar desde cada recámara y la estancia.</div>
+              <div><svg viewBox="0 0 34 34"><rect x="4" y="4" width="26" height="26"/><circle cx="17" cy="17" r="4"/></svg><b>El patio</b>Recibe con la palma y protege la intimidad.</div>
+              <div><svg viewBox="0 0 34 34"><path d="M4 30V8h26v22"/><path d="M4 14h26M4 20h26M4 26h26"/></svg><b>El muro</b>Estuco a mano que guarda la sombra y el fresco.</div>
+            </div>
+          </div>
+          <div class="fig reveal"><img class="ink-draw" src="media/linea-axo.png" alt="Axonometría en línea de las dos unidades en espejo alrededor del patio, con la galería de arcos." loading="lazy"></div>
+        </section>
+
+        <section class="panel p-sand2" aria-labelledby="h-fn">
+          <div class="txt reveal">
+            <div class="eyebrow">03 · Función espacial</div>
+            <h3 id="h-fn">Día y descanso, abiertos al mar</h3>
+            <p>La estancia y la recámara principal comparten la galería de arcos frente al Pacífico. Baños, vestidor y servicios quedan al centro, entre las dos alas.</p>
+            <div class="legend" id="zoneLegend"></div>
+            <svg class="chart" id="zoneBar" viewBox="0 0 520 74" role="img" aria-label="Superficie por zona en metros cuadrados"></svg>
+            <svg class="chart" id="roomBars" viewBox="0 0 520 260" role="img" aria-label="Superficie de cada espacio en metros cuadrados"></svg>
+            <details class="areas-table"><summary>Ver tabla de áreas</summary>
+              <div class="areas-wrap"><table class="areas" id="areas"><thead><tr><th>Espacio</th><th class="n">Medidas (m)</th><th class="n">m²</th></tr></thead><tbody></tbody></table></div>
+            </details>
+          </div>
+          <div class="fig reveal" style="flex-direction:row;align-items:center;gap:18px">
+            <svg class="chart" id="zoneDiagram" style="width:34%;flex:0 0 auto" role="img" aria-label="Planta coloreada por zonas"></svg>
+            <div style="display:flex;flex-direction:column;gap:10px;min-width:0;flex:1">
+              <figure class="photo" style="margin:0"><img class="ink-draw" src="media/linea-mar.png" alt="Alzado hacia el mar de dos unidades en espejo: cuatro arcos por villa en una sola fachada de un nivel." loading="lazy"><figcaption>Alzado al mar</figcaption></figure>
+              <figure class="photo" style="margin:0"><img class="ink-draw" src="media/linea-acceso.png" alt="Alzado de acceso: arcos de las terrazas, puertas en arco y ventanas redondas al patio." loading="lazy"><figcaption>Alzado de acceso</figcaption></figure>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel p-ink" aria-labelledby="h-int">
+          <div class="txt reveal">
+            <div class="eyebrow">04 · Interior</div>
+            <h3 id="h-int">Una planta, tres atmósferas</h3>
+            <p>Las tres villas comparten planta, mobiliario y maderas. Cambia el color del estuco: rosa barro, verde salvia y azul concreto, todos aplanados a mano.</p>
+            <div class="palettes">
+              <div class="pal"><div class="sw"><i style="background:#cf9384"></i><i style="background:#e6dccd"></i><i style="background:#dcc9ad"></i><i style="background:#d7a7a0"></i></div><b>Rosea</b>Estuco rosa · travertino · fresno · zellige rosa</div>
+              <div class="pal"><div class="sw"><i style="background:#9aa684"></i><i style="background:#e6dccd"></i><i style="background:#dcc9ad"></i><i style="background:#b9c4a8"></i></div><b>Viridis</b>Estuco salvia · travertino · fresno · zellige salvia</div>
+              <div class="pal"><div class="sw"><i style="background:#5b7fb0"></i><i style="background:#e6dccd"></i><i style="background:#dcc9ad"></i><i style="background:#a9bfd9"></i></div><b>Caerulea</b>Concreto azul · travertino · fresno · zellige azul</div>
+            </div>
+          </div>
+          <div class="fig reveal trio">
+            <img src="media/rosa/04-recamara-first.jpg" alt="Recámara principal de Rosea con vista al mar entre dos arcos." loading="lazy">
+            <img src="media/verde/03-cocina-first.jpg" alt="Cocina de Viridis con muros verde salvia y mesa para seis." loading="lazy">
+            <img src="media/azul/04-recamara-first.jpg" alt="Recámara principal de Caerulea con muros de concreto azul." loading="lazy">
+          </div>
+        </section>
+
+        <section class="panel p-sand" aria-labelledby="h-amb">
+          <div class="txt reveal">
+            <div class="eyebrow">05 · Respuesta ambiental</div>
+            <h3 id="h-amb">Sombra profunda, brisa que sube la ladera</h3>
+            <p>La galería de arcos crea terrazas cubiertas de 1.5 m que dan sombra a los ventanales. La brisa del mar sube la ladera, entra por los arcos y cruza la casa hacia el patio. Los muros masivos y la celosía filtran la luz.</p>
+            <p class="fine">Estrategias de diseño. El desempeño térmico se confirmará en el proyecto ejecutivo.</p>
+          </div>
+          <div class="fig reveal">
+            <svg class="chart" id="climate" viewBox="-1.2 -1.6 15.6 7.4" role="img" aria-label="Corte: el sol alto queda en la terraza; la brisa entra por el arco y cruza hacia el patio"></svg>
+            <figure class="photo" style="margin:0"><img src="media/rosa/dron.jpg" alt="Vista aérea de una villa en la ladera de selva baja con el mar al fondo." style="aspect-ratio:16/7;object-fit:cover" loading="lazy"><figcaption>Implantación en la ladera</figcaption></figure>
+          </div>
+        </section>
+
+        <section class="panel p-night" aria-labelledby="h-end">
+          <div class="reveal" style="display:flex;flex-direction:column;gap:22px;align-items:center">
+            <div class="eyebrow">Elysian Private Estates · Mayto</div>
+            <h2 id="h-end">El privilegio de pertenecer.</h2>
+            <div class="cta">
+              <button type="button" id="backVillas">Volver a las villas</button>
+              <a class="primary" href="https://claude.ai/artifact/XyhocaJk1ijyMZfJHDMWSz" target="_blank" rel="noopener">Explorar el modelo 3D</a>
+            </div>
+            <p class="fine">Imágenes y video generados a partir del modelo 3D de la planta tipo; son ilustrativos. Medidas aproximadas, deducidas de la superficie declarada y sujetas al proyecto ejecutivo.</p>
+          </div>
+        </section>
+
+      </div>
+      <div class="progress" id="dots" aria-hidden="true"></div>
+      <span class="scroll-hint" aria-hidden="true">Desliza ↓ para avanzar →</span>
+    </div>
+  </div>
+</main>
+<div class="tip" id="tip" role="status"></div>
+
+<script src="plan.js"></script>
+<script>
+/* ---------- Dossier drawings and charts (from the shared plan data) ---------- */
+(() => {
+  const P = window.PLAN, X = P.X, Y = P.Y, NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, a, parent) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); parent.appendChild(e); return e; };
+  const R = r => ({x:X(r[0]), y:Y(r[1]), width:X(r[2]) - X(r[0]), height:Y(r[3]) - Y(r[1])});
+  const t = (s, x, y, o, parent) => { const n = el('text', {x, y, 'text-anchor':o.anchor || 'middle', 'font-size':o.fs, fill:o.fill || '#2b1d19', 'font-family':o.ff || 'Hanken Grotesk, Arial, sans-serif', 'letter-spacing':o.ls ?? 0, 'font-weight':o.fw || 500}, parent); n.textContent = s; return n; };
+  const css = getComputedStyle(document.documentElement);
+  const Z = {priv:['Zona privada', css.getPropertyValue('--z-priv').trim()], day:['Zona de día', css.getPropertyValue('--z-day').trim()], serv:['Servicio', css.getPropertyValue('--z-serv').trim()], terr:['Terrazas', css.getPropertyValue('--z-terr').trim()]};
+  const tip = document.getElementById('tip');
+  const hover = (node, text) => {
+    node.addEventListener('pointermove', e => { tip.textContent = text; tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; tip.style.opacity = 1; });
+    node.addEventListener('pointerleave', () => { tip.style.opacity = 0; });
+  };
+
+  // Site section (schematic, no vertical scale): sea → beach → coastal plain → hillside with the villas
+  {
+    const s = document.getElementById('siteSection');
+    el('path', {d:'M0 230 H210 L250 222 H600 C700 210 760 150 840 110 C900 80 950 70 1000 64 V300 H0 Z', fill:'#d9c8b2'}, s);
+    el('rect', {x:0, y:230, width:210, height:70, fill:'#7ea3b4'}, s);
+    el('path', {d:'M600 222 C700 210 760 150 840 110 C900 80 950 70 1000 64', fill:'none', stroke:'#2b1d19', 'stroke-width':1.5}, s);
+    el('path', {d:'M0 230 H210 L250 222 H600', fill:'none', stroke:'#2b1d19', 'stroke-width':1.5}, s);
+    for (const [x, c] of [[808, '#cf9384'], [832, '#9aa684'], [856, '#5b7fb0']]) el('rect', {x:x - 9, y:118 - (x - 808) * 1.25 - 8, width:18, height:8, fill:c, stroke:'#2b1d19', 'stroke-width':.8}, s);
+    el('path', {d:'M210 268 H832', stroke:'#2b1d19', 'stroke-width':1}, s);
+    for (const x of [210, 832]) el('path', {d:`M${x} 260 V276`, stroke:'#2b1d19', 'stroke-width':1}, s);
+    t('700 m', 521, 262, {fs:15, fw:600, ff:'IBM Plex Mono, monospace'}, s);
+    el('path', {d:'M832 95 L40 200', stroke:'#9a6457', 'stroke-width':1, 'stroke-dasharray':'5 5', fill:'none'}, s);
+    t('VISTA AL PACÍFICO', 360, 150, {fs:12, ls:2, fill:'#9a6457'}, s);
+    for (const y of [195, 210]) el('path', {d:`M120 ${y} C400 ${y - 10} 650 ${y - 40} 790 ${y - 95}`, stroke:'#3b6aa8', 'stroke-width':1.3, fill:'none', 'marker-end':'url(#arS)'}, s);
+    const defs = el('defs', {}, s); const mk = el('marker', {id:'arS', viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:6, markerHeight:6, orient:'auto'}, defs); el('path', {d:'M0 0 L10 5 L0 10z', fill:'#3b6aa8'}, mk);
+    t('BRISA', 200, 186, {fs:12, ls:2, fill:'#3b6aa8'}, s);
+    t('PACÍFICO', 105, 252, {fs:12, ls:2, fill:'#fff'}, s);
+    t('PLAYA', 232, 214, {fs:11, ls:1.5}, s);
+    t('PLANICIE COSTERA', 420, 214, {fs:11, ls:1.5}, s);
+    t('LADERA · SELVA BAJA', 900, 130, {fs:11, ls:1.5}, s);
+    t('ELYSIAN', 832, 52, {fs:14, ls:4, ff:'Marcellus, serif', fw:400}, s);
+    t('Esquema sin escala vertical', 995, 296, {fs:10, anchor:'end', fill:'#8d7a73'}, s);
+  }
+
+  // Zone plan
+  {
+    const s = document.getElementById('zoneDiagram'); s.setAttribute('viewBox', '-0.4 -0.4 10.2 20.3');
+    for (const rm of P.ROOMS){ const r = el('rect', {...R(rm.r), fill:Z[rm.kind][1], 'fill-opacity':.72}, s); hover(r, `${rm.n} · ${P.area(rm.r).toFixed(2)} m²`); }
+    for (const w of P.WALLS) el('rect', {...R(w.r), fill:'#2b1d19'}, s);
+    for (const g of P.GLAZING) el('rect', {...R(g), fill:'#9fc7d6'}, s);
+  }
+  document.getElementById('zoneLegend').innerHTML = Object.values(Z).map(([n, c]) => `<span><i style="background:${c}"></i>${n}</span>`).join('');
+
+  // Area by zone: one 100% bar, 2px gaps, labels under each segment
+  {
+    const s = document.getElementById('zoneBar'), sums = {priv:0, day:0, serv:0, terr:0};
+    for (const rm of P.ROOMS) sums[rm.kind] += P.area(rm.r);
+    const total = Object.values(sums).reduce((a, b) => a + b, 0), W = 520, gap = 2;
+    let x = 0;
+    for (const k of ['priv', 'day', 'serv', 'terr']){
+      const w = (sums[k] / total) * (W - gap * 3);
+      const r = el('rect', {x, y:6, width:w, height:22, rx:3, fill:Z[k][1]}, s);
+      hover(r, `${Z[k][0]} · ${sums[k].toFixed(1)} m² · ${Math.round(sums[k] / total * 100)}%`);
+      if (w > 44) t(`${sums[k].toFixed(1)} m²`, x + 2, 48, {fs:12, anchor:'start', ff:'IBM Plex Mono, monospace'}, s);
+      if (w > 44) t(`${Math.round(sums[k] / total * 100)}%`, x + 2, 64, {fs:11, anchor:'start', fill:'#8d7a73'}, s);
+      x += w + gap;
+    }
+  }
+
+  // Area of each room: single-series horizontal bars, ranked, value at the bar end
+  {
+    const s = document.getElementById('roomBars');
+    const rows = P.ROOMS.filter(r => r.kind !== 'terr').map(r => ({n:r.n, a:P.area(r.r), k:r.kind})).sort((a, b) => b.a - a.a);
+    const L = 150, W = 520 - L - 50, max = Math.ceil(rows[0].a / 5) * 5, rh = 260 / rows.length;
+    for (let v = 0; v <= max; v += 5) el('path', {d:`M${L + v / max * W} 0 V${rows.length * rh}`, stroke:'rgba(43,29,25,.1)', 'stroke-width':1}, s);
+    rows.forEach((r, i) => {
+      const y = i * rh, w = Math.max(2, r.a / max * W);
+      t(r.n.length > 22 ? r.n.slice(0, 21) + '…' : r.n, L - 8, y + rh * .62, {fs:11, anchor:'end'}, s);
+      const b = el('rect', {x:L, y:y + rh * .22, width:w, height:rh * .56, rx:3, fill:'#9a6457'}, s);
+      hover(b, `${r.n} · ${r.a.toFixed(2)} m²`);
+      t(r.a.toFixed(1), L + w + 6, y + rh * .62, {fs:11, anchor:'start', ff:'IBM Plex Mono, monospace', fill:'#5b4a44'}, s);
+    });
+  }
+
+  // Climate section (metres): interior → glass → covered terrace → arch
+  {
+    const s = document.getElementById('climate'), line = '#2b1d19', clay = '#c98f80', sea = '#3b6aa8', sun = '#a87f24';
+    el('rect', {x:-1.2, y:3.6, width:15.6, height:.12, fill:line}, s);
+    el('rect', {x:0, y:0, width:.3, height:3.6, fill:clay}, s);
+    el('rect', {x:0, y:.32, width:10.9, height:.28, fill:clay}, s);
+    el('rect', {x:0, y:0, width:10.9, height:.12, fill:clay, opacity:.6}, s);
+    el('path', {d:'M10.6 0 H10.9 V3.6 H10.6 Z', fill:clay, opacity:.35}, s);
+    el('path', {d:'M10.6 .6 H10.9 V1.5 H10.6 Z', fill:clay}, s);
+    el('rect', {x:9.1, y:.6, width:.05, height:3.0, fill:'#6f9fb3'}, s);
+    t('INTERIOR', 4.5, 2.4, {fs:.36, ls:.2, fill:line}, s);
+    t('TERRAZA 1.5 m', 9.85, 3.3, {fs:.22, ls:.08, fill:line}, s);
+    t('ARCO', 10.75, -.25, {fs:.24, ls:.1, fill:line}, s);
+    el('circle', {cx:13.6, cy:-1.05, r:.35, fill:sun}, s);
+    el('path', {d:'M13.3 -.8 L10.95 .55', stroke:sun, 'stroke-width':.05, 'stroke-dasharray':'.15 .1', fill:'none'}, s);
+    t('SOL ALTO: SOMBRA EN LA TERRAZA', 12.2, -1.25, {fs:.22, ls:.06, anchor:'end', fill:sun}, s);
+    const defs = el('defs', {}, s); const mk = el('marker', {id:'arC', viewBox:'0 0 10 10', refX:8, refY:5, markerWidth:4, markerHeight:4, orient:'auto'}, defs); el('path', {d:'M0 0 L10 5 L0 10z', fill:sea}, mk);
+    for (const [y, o] of [[2.2, 1], [2.75, .7]]) el('path', {d:`M14.2 ${y} C12.6 ${y - .2} 11.2 ${y + .1} 9.6 ${y} S3 ${y - .3} -.9 ${y - .5}`, stroke:sea, 'stroke-width':.07, fill:'none', opacity:o, 'marker-end':'url(#arC)'}, s);
+    t('BRISA DEL MAR', 13.2, 1.85, {fs:.24, ls:.1, fill:sea}, s);
+    t('HACIA EL PATIO', -.2, 1.45, {fs:.22, ls:.08, anchor:'start', fill:sea}, s);
+  }
+})();
+</script>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NAMES = {rosa:'Rosea', verde:'Viridis', azul:'Caerulea'};
+  // One continuous film per villa; each keypoint is where a room's camera move ends
+  const TL = {"rosa": {"T": 36.53, "starts": [0.0, 7.59, 12.18, 16.77, 21.36, 25.95, 30.54], "keys": [7.55, 12.14, 16.73, 21.32, 25.91, 30.5, 36.47]}, "verde": {"T": 36.53, "starts": [0.0, 7.59, 12.18, 16.77, 21.36, 25.95, 30.54], "keys": [7.55, 12.14, 16.73, 21.32, 25.91, 30.5, 36.47]}, "azul": {"T": 36.53, "starts": [0.0, 7.59, 12.18, 16.77, 21.36, 25.95, 30.54], "keys": [7.55, 12.14, 16.73, 21.32, 25.91, 30.5, 36.47]}};
+  const SEG = [
+    {t:'La llegada', s:'Estacionamiento de grava y fachada de acceso.', lbl:'Llegada'},
+    {t:'El acceso', s:'Entre las dos unidades, el patio compartido con su palma.', lbl:'Acceso'},
+    {t:'El patio', s:'Puerta de parota en arco y ventanas redondas con reja de latón.', lbl:'Patio'},
+    {t:'Cocina · barra · comedor', s:'23.50 m². Isla de piedra que continúa en mesa para seis.', lbl:'Cocina'},
+    {t:'Recámara principal', s:'21.83 m², con terraza y vista al Pacífico.', lbl:'Recámara'},
+    {t:'Cuatro arcos al mar', s:'Cada villa abre cuatro arcos al Pacífico desde la ladera, a 700 m de la costa.', lbl:'Vista al mar'},
+    {t:'Estancia', s:'15.08 m². En la pantalla, la planta tipo de Elysian.', lbl:'Estancia', last:true}
+  ];
+  // TV screen in the last frame of the film, as fractions of the frame (measured from the pixels)
+  const SRC_P = {w:1076, h:1928};
+  const TV_P = {rosa:[.0781, .3278, .8625, .305], verde:[.0781, .3278, .8625, .305], azul:[.0781, .3278, .8662, .305]}; // video/measure_tv.py
+  const TV = {rosa:[.2188, .1569, .575, .6639], verde:[.2109, .1849, .5766, .6303], azul:[.2109, .1597, .5687, .6106]};
+  const SRC = {w:1928, h:1076};
+
+  const $ = id => document.getElementById(id);
+  const landing = $('inicio'), flight = $('flight'), flightEnd = $('flightEnd');
+  const tour = $('recorrido'), stage = $('tourStage'), stepsEl = $('steps'), layer = $('screenLayer'), veil = $('veil');
+  const video = $('tourVideo'), cap = $('cap'), arrival = $('arrival');
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  // ---------- loader: fills ELYSIAN with the three villa colours as the bytes arrive ----------
+  const loader = $('loader'), ldPct = $('ldPct'), ldNote = $('ldNote');
+  function showLoad(p, note){
+    const v = clamp(Math.round(p), 0, 100);
+    loader.style.setProperty('--p', v + '%'); ldPct.textContent = v; loader.setAttribute('aria-valuenow', v);
+    if (note !== undefined) ldNote.textContent = note;
+  }
+  async function fetchBlob(url, onP){
+    try {
+      const r = await fetch(url); if (!r.ok || !r.body) throw new Error(r.status);
+      const len = +r.headers.get('content-length') || 0, rd = r.body.getReader(), parts = []; let got = 0, fake = 0;
+      for (;;){
+        const {done, value} = await rd.read(); if (done) break;
+        parts.push(value); got += value.length;
+        onP(len ? got / len : (fake = Math.min(.95, fake + .02)));
+      }
+      onP(1); return URL.createObjectURL(new Blob(parts, {type:'video/mp4'}));
+    } catch (e) { onP(1); return url; } // stream the file directly if the download can't be watched
+  }
+
+  // ---------- landing ----------
+  // Portrait screens get their own vertical films, shot 9:16 from vertical start frames
+  const PHONE = innerWidth / innerHeight < .8, FILM = PHONE ? SRC_P : SRC;
+  if (PHONE) Object.assign(TV, TV_P); // same clip lengths, so the timeline TL is shared
+  function coverBox(cw, ch, src = SRC){ const s = Math.max(cw / src.w, ch / src.h), w = src.w * s, h = src.h * s; return {x:(cw - w) / 2, y:(ch - h) / 2, w, h}; }
+  // On a phone the wide hillside shot can't show all three villas at once: centre one, swipe sideways for the others
+  const pins = [...document.querySelectorAll('.pin')], hintDots = [...document.querySelectorAll('.l-hint i')];
+  let focus = 1;
+  function placePins(){
+    const cw = landing.clientWidth, b = coverBox(cw, landing.clientHeight);
+    const pans = pins.some(p => { const x = b.x + b.w * +p.dataset.x; return x < 40 || x > cw - 40; });
+    let x = b.x;
+    if (pans) x = clamp(cw / 2 - b.w * +pins[focus].dataset.x, cw - b.w, 0);
+    const pos = b.w - cw > 1 ? (x / (cw - b.w)) * 100 : 50;
+    flight.style.objectPosition = flightEnd.style.objectPosition = `${pos}% 50%`;
+    pins.forEach(p => { p.style.left = (x + b.w * +p.dataset.x) + 'px'; p.style.top = (b.y + b.h * +p.dataset.y) + 'px'; });
+    landing.classList.toggle('pans', pans);
+    hintDots.forEach((d, i) => d.classList.toggle('on', i === focus));
+  }
+  function panTo(i){ focus = clamp(i, 0, pins.length - 1); placePins(); }
+  let lSwipe = null;
+  landing.addEventListener('pointerdown', e => { if (landing.classList.contains('pans') && e.pointerType !== 'mouse') lSwipe = {x:e.clientX, y:e.clientY}; });
+  landing.addEventListener('pointerup', e => {
+    if (!lSwipe) return;
+    const dx = e.clientX - lSwipe.x, dy = e.clientY - lSwipe.y; lSwipe = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) panTo(focus - Math.sign(dx));
+  });
+  landing.addEventListener('pointercancel', () => { lSwipe = null; });
+  new ResizeObserver(placePins).observe(landing); placePins();
+  const landed = () => { flightEnd.hidden = false; landing.classList.add('ready'); };
+  flight.addEventListener('ended', landed);
+  const blobs = {}, pending = {};
+  (async () => {
+    showLoad(0, '');
+    const hevc = !!video.canPlayType('video/mp4; codecs="hvc1.1.6.L120.90"'); // iPhones and most recent Androids
+    const tf = PHONE ? [hevc ? 'tour-phone-hevc.mp4' : 'tour-phone.mp4', 13.5] : ['tour.mp4', 10.4];
+    const files = [['media/landing.mp4', 4.5], ...['rosa', 'verde', 'azul'].map(v => [`media/${v}/${tf[0]}`, tf[1]])]; // MB, to weight the bar
+    const total = files.reduce((a, f) => a + f[1], 0), frac = files.map(() => 0);
+    const got = files.map(([url], i) => fetchBlob(url, f => { frac[i] = f; showLoad(files.reduce((a, g, j) => a + g[1] * frac[j], 0) / total * 97); }));
+    ['rosa', 'verde', 'azul'].forEach((v, i) => { pending[v] = got[i + 1].then(u => (blobs[v] = u)); });
+    flight.src = await got[0];
+    await Promise.all(got);
+    await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
+    showLoad(100);
+    setTimeout(() => { loader.classList.add('done'); if (reduce) landed(); else flight.play().catch(landed); }, 500);
+  })();
+  $('replayFlight').addEventListener('click', () => { landing.classList.remove('ready'); flightEnd.hidden = true; flight.currentTime = 0; flight.play().catch(landed); });
+  document.querySelectorAll('[data-villa]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); enterVilla(b.dataset.villa); }));
+
+  // ---------- tour: the user's gesture drives the camera ----------
+  let villa = 'rosa', ready = false, shown = 0, target = 0, mode = 'idle', busy = false, inView = false, autoSpeed = 1.5;
+  const keys = () => TL[villa].keys, starts = () => TL[villa].starts;
+  const firstKey = () => keys()[0], lastKey = () => keys()[keys().length - 1];
+  const steps = SEG.map((d, j) => {
+    const b = document.createElement('button'); b.className = 'step'; b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-label', d.t);
+    b.innerHTML = `<span class="bar"><i></i></span><span class="lbl">${d.lbl}</span>`;
+    b.addEventListener('click', () => goKey(keys()[j]));
+    stepsEl.appendChild(b); return {b, bar:b.querySelector('i')};
+  });
+
+  const loadVilla = v => blobs[v] || pending[v]; // every film is already downloading under the opening loader
+  async function setVilla(v, at){
+    villa = v; ready = false;
+    document.querySelectorAll('[data-chip]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.chip === v)));
+    arrival.textContent = NAMES[v];
+    video.poster = PHONE ? `media/${v}/phone-first.jpg` : `media/${v}/00-vuelo-first.jpg`;
+    const url = await loadVilla(v);
+    if (villa !== v) return;
+    video.src = url; video.load(); // Safari on iPhone won't read the film until asked
+    await new Promise(r => { if (video.readyState >= 2) r(); else { video.addEventListener('loadeddata', r, {once:true}); setTimeout(r, 4000); } });
+    if (villa !== v) return;
+    shown = target = clamp(at, 0, TL[v].T - .05); video.currentTime = shown; ready = true; lastCap = -1;
+  }
+  async function enterVilla(v){
+    // unlock the video inside the tap itself: iPhones only decode frames for seeking after a play() from a gesture
+    video.play().then(() => { if (mode !== 'auto') video.pause(); }).catch(() => {});
+    if (!reduce){ veil.classList.add('on'); }
+    await setVilla(v, 0);
+    tour.scrollIntoView();
+    requestAnimationFrame(() => veil.classList.remove('on'));
+    goKey(firstKey()); // the arrival flight plays on its own to the entrance
+  }
+  document.querySelectorAll('[data-chip]').forEach(c => c.addEventListener('click', () => { if (c.dataset.chip !== villa) setVilla(c.dataset.chip, shown); }));
+
+  function nextKey(t, dir){
+    const k = keys();
+    if (dir > 0) return k.find(x => x > t + .08) ?? k[k.length - 1];
+    return [...k].reverse().find(x => x < t - .08) ?? k[0];
+  }
+  function goKey(k){
+    if (!ready || busy) return;
+    if (k >= lastKey() - .01 && shown >= lastKey() - .05){ enterScreen(); return; }
+    mode = 'auto'; target = k; autoSpeed = Math.max(1.5, Math.abs(target - shown) / 2.4); // long jumps still land in about 2.4 s
+    stall = 0;
+  }
+
+  // Render loop: move the shown time toward the target, seeking only once the last seek has landed
+  let seeking = false, lastT = performance.now(), lastCap = -1, stall = 0, noNative = false, playing = false;
+  video.addEventListener('playing', () => { playing = true; }); // iPhones take a moment to start; don't count that as a stall
+  video.addEventListener('seeked', () => { seeking = false; });
+  function frame(now){
+    const dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
+    if (ready && !busy){
+      const d = target - shown;
+      if (mode === 'auto' && d > .02 && autoSpeed <= 1.6 && !noNative){
+        // forward at near real speed: let the decoder play, it is smoother than seeking
+        if (video.paused){ playing = false; video.playbackRate = autoSpeed; video.play().catch(e => { if (e.name === 'NotAllowedError') noNative = true; }); }
+        const ct = video.currentTime;
+        if (ct > shown + .001){ shown = ct; stall = 0; }
+        else if (playing && !video.seeking && (stall += dt) > .8){ noNative = true; video.pause(); } // playing but frozen: step by seeking instead
+        if (shown >= target - .03){ video.pause(); shown = target; video.currentTime = target; mode = 'idle'; }
+      } else {
+        if (!video.paused) video.pause();
+        if (Math.abs(d) > .003){
+          shown += mode === 'auto' ? Math.sign(d) * Math.min(Math.abs(d), autoSpeed * dt) : d * Math.min(1, dt * 9);
+          if (!seeking && Math.abs(video.currentTime - shown) > 1 / 48){ seeking = true; video.currentTime = shown; }
+        } else if (mode === 'auto') mode = 'idle';
+      }
+      paint();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function segAt(t){ const k = keys(); for (let i = 0; i < k.length; i++) if (t <= k[i] + .05) return i; return k.length - 1; }
+  function paint(){
+    const k = keys(), s = starts(), i = segAt(shown), near = Math.abs(k[i] - shown) < .35;
+    if (i !== lastCap){
+      const d = SEG[i];
+      cap.querySelector('.idx').textContent = `${String(i + 1).padStart(2, '0')} / ${String(SEG.length).padStart(2, '0')} · ${NAMES[villa]}`;
+      cap.querySelector('h2').textContent = d.t; cap.querySelector('p').textContent = d.s;
+      cap.querySelector('[data-enter]').hidden = !d.last; lastCap = i;
+    }
+    cap.classList.toggle('show', near && mode !== 'scrub-fast');
+    arrival.classList.toggle('show', shown < firstKey() - .4);
+    steps.forEach((st, j) => {
+      st.bar.style.width = (clamp((shown - s[j]) / (k[j] - s[j]), 0, 1) * 100) + '%';
+      st.b.setAttribute('aria-current', String(j === i)); st.b.setAttribute('aria-selected', String(j === i));
+    });
+  }
+
+  // ---------- gestures: trackpad / wheel / touch / drag ----------
+  const SENS = 1 / 240; // seconds of film per pixel of trackpad travel
+  let g = null, wheelTimer = null, overshoot = 0;
+  function gestureStart(){ if (!g) g = {from:target, travel:0, ev:[], flicked:false}; }
+  function endGesture(flick){
+    if (!g) return;
+    if (flick) goKey(nextKey(target, flick));                                             // a fast release glides to the next stop
+    else if (!g.flicked){
+      const k = keys(), near = k.reduce((a, b) => Math.abs(b - target) < Math.abs(a - target) ? b : a);
+      if (Math.abs(near - target) < .45){ mode = 'auto'; autoSpeed = 1.5; stall = 0; target = near; } // settle onto a stop close by
+      else mode = 'idle';                                                                 // otherwise stay exactly where the user stopped
+    }
+    g = null;
+  }
+  let coast = null; // after a flick, the trackpad's momentum tail is ignored until it dies out or a fresh swipe starts
+  tour.addEventListener('wheel', e => {
+    if (!ready || busy) return;
+    const raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    const px = e.deltaMode === 1 ? raw * 40 : e.deltaMode === 2 ? raw * innerHeight : raw;
+    const now = performance.now(), mag = Math.abs(px), dir = Math.sign(px);
+    if (coast && now - coast.t < 250 && dir === coast.dir && !(mag > 20 && mag > coast.last * 1.6)){
+      e.preventDefault(); coast.t = now; coast.last = mag; return;
+    }
+    if (coast){ coast = null; if (g) g.flicked = false; } // the user took over again
+    if (px < 0 && target <= firstKey() + .01 && !g) return;                  // let the page scroll back up to the landing
+    e.preventDefault();
+    if (px > 0 && target >= lastKey() - .01){ overshoot += px; if (overshoot > 220){ overshoot = 0; enterScreen(); } return; }
+    overshoot = 0;
+    const notch = e.deltaMode !== 0 || (Math.abs(raw) >= 100 && Number.isInteger(raw) && e.deltaX === 0);
+    if (notch){ coast = {t:now, dir, last:mag}; if (g) g.flicked = true; goKey(nextKey(target, dir)); return; } // a mouse-wheel click moves one room
+    gestureStart();
+    clearTimeout(wheelTimer); wheelTimer = setTimeout(endGesture, 140);
+    g.travel += px;
+    g.ev.push([now, px]); g.ev = g.ev.filter(p => now - p[0] < 80);
+    const burst = g.ev.reduce((a, p) => a + p[1], 0);
+    if (Math.abs(burst) > 96){                                                // fast swipe: glide to the next stop
+      coast = {t:now, dir:Math.sign(burst), last:mag}; g.flicked = true; g.ev = [];
+      goKey(nextKey(target, coast.dir)); return;
+    }
+    mode = 'scrub'; target = clamp(target + px * SENS, firstKey(), lastKey());
+  }, {passive:false});
+
+  let drag = null;
+  tour.addEventListener('pointerdown', e => {
+    if (!ready || busy || e.target.closest('button')) return;
+    drag = {x:e.clientX, y:e.clientY, from:target, axis:null, id:e.pointerId, ev:[]};
+  });
+  tour.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.axis){ if (Math.hypot(dx, dy) < 8) return; drag.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; if (drag.axis === 'x'){ tour.setPointerCapture(e.pointerId); gestureStart(); g.from = drag.from; } }
+    if (drag.axis !== 'x') return;
+    const now = performance.now(); drag.ev.push([now, e.clientX]); drag.ev = drag.ev.filter(p => now - p[0] < 100);
+    g.travel = -dx; mode = 'scrub';
+    target = clamp(drag.from - dx * (3.4 / tour.clientWidth), firstKey(), lastKey()); // a full-width swipe ≈ 3.4 s of camera
+  });
+  const dragEnd = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const wasX = drag.axis === 'x', atEnd = drag.from >= lastKey() - .02 && e.clientX - drag.x < -60;
+    const ev = drag.ev, now = performance.now(), recent = ev.length > 1 && now - ev[ev.length - 1][0] < 60;
+    const vx = recent ? (ev[ev.length - 1][1] - ev[0][1]) / Math.max(16, ev[ev.length - 1][0] - ev[0][0]) : 0; // px per ms at release
+    drag = null;
+    if (wasX){ if (atEnd){ g = null; enterScreen(); } else endGesture(Math.abs(vx) > .5 ? -Math.sign(vx) : 0); }
+  };
+  tour.addEventListener('pointerup', dragEnd); tour.addEventListener('pointercancel', e => { if (drag && e.pointerId === drag.id){ drag = null; g = null; mode = 'idle'; } });
+
+  addEventListener('keydown', e => {
+    if (!inView || busy || !ready) return;
+    if (e.key === 'ArrowRight'){ e.preventDefault(); goKey(nextKey(target, 1)); }
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); goKey(nextKey(target, -1)); }
+  });
+  $('prevBtn').addEventListener('click', () => goKey(nextKey(target, -1)));
+  $('nextBtn').addEventListener('click', () => goKey(nextKey(target, 1)));
+  new IntersectionObserver(es => {
+    inView = es[0].intersectionRatio > .55;
+    if (inView && !ready) setVilla(villa, 0).then(() => goKey(firstKey()));
+  }, {threshold:[0, .55, 1]}).observe(tour);
+
+  // ---------- into the TV: the screen grows into the page, the room scales up behind it ----------
+  function screenRect(){
+    const b = coverBox(tour.clientWidth, tour.clientHeight, FILM), f = TV[villa];
+    return {x:b.x + b.w * f[0], y:b.y + b.h * f[1], w:b.w * f[2], h:b.h * f[3]};
+  }
+  async function enterScreen(){
+    if (busy || !ready) return;
+    busy = true; mode = 'idle'; video.pause();
+    if (Math.abs(shown - lastKey()) > .05){ shown = target = lastKey(); await new Promise(r => { video.addEventListener('seeked', r, {once:true}); video.currentTime = shown; }); }
+    tour.classList.add('entering');
+    const r = screenRect(), W = tour.clientWidth, H = tour.clientHeight;
+    Object.assign(layer.style, {transition:'none', left:r.x + 'px', top:r.y + 'px', width:r.w + 'px', height:r.h + 'px'});
+    layer.classList.add('on');
+    const land = () => {
+      document.getElementById('proyecto').scrollIntoView();
+      requestAnimationFrame(() => {
+        layer.classList.remove('on'); stage.style.transition = 'none'; stage.style.transform = ''; tour.classList.remove('entering');
+        veil.classList.remove('on'); busy = false;
+      });
+    };
+    if (reduce){ land(); return; }
+    stage.style.transformOrigin = `${r.x + r.w / 2}px ${r.y + r.h / 2}px`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const ease = 'cubic-bezier(.7,0,.2,1)';
+      layer.style.transition = `left 1.4s ${ease}, top 1.4s ${ease}, width 1.4s ${ease}, height 1.4s ${ease}`;
+      Object.assign(layer.style, {left:'0px', top:'0px', width:W + 'px', height:H + 'px'});
+      stage.style.transition = `transform 1.4s ${ease}`; stage.style.transform = `scale(${Math.max(W / r.w, H / r.h) * 1.02})`;
+    }));
+    setTimeout(() => { veil.style.background = 'var(--bp)'; veil.classList.add('on'); }, 1350);
+    setTimeout(() => { land(); setTimeout(() => { veil.style.background = ''; }, 500); }, 1800);
+  }
+  document.addEventListener('click', e => { if (e.target.closest('[data-enter]')) enterScreen(); });
+  $('enterBtn').addEventListener('click', enterScreen);
+
+  // ---------- dossier: vertical scroll drives the horizontal track ----------
+  const wrap = $('trackWrap'), track = $('track'), panels = [...track.children], dots = $('dots');
+  panels.forEach(() => dots.appendChild(document.createElement('i')));
+  const wide = matchMedia('(min-width: 861px)');
+  function sizeTrack(){
+    if (!wide.matches){ wrap.style.height = ''; panels.forEach(p => p.classList.add('in')); return; }
+    const extra = track.scrollWidth - innerWidth;
+    wrap.style.height = (innerHeight + extra) + 'px';
+    onScroll();
+  }
+  function onScroll(){
+    if (!wide.matches) return;
+    const top = wrap.getBoundingClientRect().top, extra = track.scrollWidth - innerWidth;
+    const x = Math.min(extra, Math.max(0, -top));
+    track.style.transform = `translateX(${-x}px)`;
+    const mid = x + innerWidth / 2;
+    panels.forEach((p, i) => {
+      const a = p.offsetLeft, b = a + p.offsetWidth;
+      if (mid > a - innerWidth * .25) p.classList.add('in');
+      dots.children[i].classList.toggle('on', mid >= a && mid < b);
+    });
+  }
+  addEventListener('scroll', onScroll, {passive:true});
+  addEventListener('resize', sizeTrack); wide.addEventListener('change', sizeTrack);
+  sizeTrack();
+  $('backVillas').addEventListener('click', () => { landing.scrollIntoView(); });
+})();
+</script>
