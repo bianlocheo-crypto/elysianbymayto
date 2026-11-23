@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15100f">
+<meta name="description" content="Galería de Elysian Private Estates · Mayto: Rosea, Viridis y Caerulea, una misma planta en tres colores.">
+<meta property="og:title" content="Galería · Elysian Private Estates">
+<meta property="og:image" content="https://elysianbymayto.vercel.app/og.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Galería · Elysian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Marcellus&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Gallery: every render of the three villas, grouped by colour; a viewer that can swap the colour of the same room. */
+:root{
+  --night:#15100f; --night-2:#211816; --sand:#f1e8df; --clay:#c98f80; --glow:#f6dcb4; --paper-ink:#f7efe8; --muted:#a8968e;
+  --f-display:"Marcellus", Georgia, serif;
+  --f-body:"Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --f-word:"Cinzel", "Marcellus", Georgia, serif;
+  --rosea:#cf9384; --viridis:#9aa684; --caerulea:#5b7fb0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--paper-ink);font:16px/1.55 var(--f-body)}
+img{display:block;max-width:100%;height:auto}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+.gutter{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1440px;margin:0 auto}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--clay)}
+
+/* top bar */
+.top{position:absolute;inset:0 0 auto;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:calc(18px + env(safe-area-inset-top, 0px))}
+.mark{font:600 17px/1 var(--f-word);letter-spacing:.34em;text-decoration:none}
+.top nav{display:flex;gap:18px}
+.top nav a{font:500 12px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding-bottom:3px;border-bottom:1px solid transparent;color:#f3e4d8}
+.top nav a:hover,.top nav a[aria-current]{border-color:currentColor}
+
+/* hero */
+.hero{position:relative;min-height:min(78svh, 760px);display:flex;align-items:flex-end;overflow:hidden;background:#0d0b0a}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom, rgba(10,8,8,.5), transparent 25%, rgba(21,16,15,.35) 45%, rgba(21,16,15,.96))}
+.hero .eyebrow{color:#f3e4d8;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.hero .in{position:relative;z-index:2;padding-bottom:clamp(28px,6vh,56px);width:100%}
+.hero h1{font:400 clamp(52px,10vw,150px)/.9 var(--f-word);letter-spacing:.06em;margin:10px 0 14px}
+.hero p{margin:0;max-width:46ch;color:#efe1d6;font-size:clamp(15px,1.4vw,19px)}
+
+/* tabs */
+.tabs{position:sticky;top:0;z-index:5;background:rgba(21,16,15,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(247,239,232,.1)}
+.tabs .wrap{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-top:12px;padding-bottom:12px}
+.tabs .wrap::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:9px;background:none;border:1px solid rgba(247,239,232,.28);border-radius:2px;padding:10px 14px;cursor:pointer;font:600 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase}
+.tab i,.sw{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.55)}
+.tab[aria-pressed="true"]{background:var(--sand);color:var(--night);border-color:var(--sand)}
+
+/* villa sections */
+.villa{padding-top:clamp(40px,7vw,88px)}
+.v-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;margin-bottom:22px;border-bottom:1px solid rgba(247,239,232,.12);padding-bottom:16px}
+.v-head h2{display:flex;align-items:center;gap:14px;font:400 clamp(34px,5vw,64px)/1 var(--f-display);margin:0}
+.v-head h2 .sw{width:22px;height:22px;border:0}
+.v-head p{margin:0;color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.tile{position:relative;display:block;width:100%;padding:0;border:0;background:#0d0b0a;cursor:zoom-in;text-align:left;overflow:hidden;border-radius:2px}
+.tile img{width:100%;aspect-ratio:43/24;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1), opacity .5s}
+.tile:hover img{transform:scale(1.03)}
+.tile figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 10px;background:linear-gradient(transparent, rgba(10,8,8,.75));font:500 12px/1.3 var(--f-mono);letter-spacing:.06em}
+.tall-h{margin:30px 0 14px}
+.row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(8px,1vw,14px)}
+.row .tile img{aspect-ratio:24/43}
+.row .tile figcaption{font-size:11px;padding:22px 8px 8px}
+.foot{padding:72px 0 calc(48px + env(safe-area-inset-bottom, 0px));color:var(--muted);font-size:12px;text-align:center}
+.foot a{color:var(--glow)}
+
+@media (max-width:980px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:720px){
+  .top nav{gap:12px} .top nav a{font-size:11px;letter-spacing:.14em}
+  .mark{font-size:15px;letter-spacing:.28em}
+  .grid{grid-template-columns:1fr}
+  .tabs .wrap{gap:6px} .tab{padding:9px 9px;font-size:11px;letter-spacing:.08em;gap:7px}
+  /* phones: the vertical frames scroll sideways, one and a half at a time */
+  .row{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:max(16px, env(safe-area-inset-left, 0px));scrollbar-width:none;margin:0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:0 max(16px, env(safe-area-inset-left, 0px))}
+  .row::-webkit-scrollbar{display:none}
+  .row > figure{flex:0 0 58%;scroll-snap-align:start}
+}
+
+/* viewer */
+.viewer{position:fixed;inset:0;z-index:50;background:rgba(10,8,8,.97);display:grid;grid-template-rows:auto 1fr auto;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.viewer.on{opacity:1;pointer-events:auto}
+.vw-top,.vw-bot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:calc(12px + env(safe-area-inset-top, 0px));padding-bottom:12px}
+.vw-bot{padding-top:12px;padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px));flex-wrap:wrap}
+.vw-cap{min-width:0}
+.vw-cap b{display:block;font:400 clamp(20px,2.4vw,30px)/1.1 var(--f-display)}
+.vw-cap span{font:500 12px/1.4 var(--f-mono);letter-spacing:.06em;color:var(--muted)}
+.vw-count{font:500 12px/1 var(--f-mono);letter-spacing:.1em;color:var(--muted)}
+.vw-close{background:none;border:1px solid rgba(247,239,232,.35);border-radius:2px;width:44px;height:44px;cursor:pointer;font-size:22px;line-height:1}
+.vw-stage{position:relative;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
+.vw-stage img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transition:opacity .25s ease}
+.vw-stage img.swap{opacity:.35}
+.vw-nav{position:absolute;top:50%;translate:0 -50%;width:48px;height:48px;border-radius:50%;border:1px solid rgba(247,239,232,.4);background:rgba(18,13,12,.55);cursor:pointer;font-size:22px;line-height:1;display:grid;place-items:center}
+.vw-nav.prev{left:max(12px, env(safe-area-inset-left, 0px))} .vw-nav.next{right:max(12px, env(safe-area-inset-right, 0px))}
+.vw-colors{display:flex;gap:8px;flex-wrap:wrap}
+.vw-colors button{display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid rgba(247,239,232,.3);border-radius:2px;padding:9px 12px;cursor:pointer;font:600 11px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase}
+.vw-colors button[aria-pressed="true"]{background:var(--sand);color:var(--night);border-color:var(--sand)}
+@media (max-width:720px){ .vw-nav{display:none} }
+@media (prefers-reduced-motion: reduce){ .tile img,.viewer,.vw-stage img{transition:none} }
+</style>
+
+<header class="hero">
+  <img src="media/galeria/tres-villas-t.jpg" srcset="media/galeria/tres-villas-t.jpg 960w, media/galeria/tres-villas.jpg 2400w" sizes="100vw" alt="Las tres villas, Rosea, Viridis y Caerulea, sobre la ladera de selva baja con vista al Pacífico." width="2400" height="1340">
+  <div class="top gutter">
+    <a class="mark" href="./">ELYSIAN</a>
+    <nav aria-label="Secciones"><a href="./#recorrido">Recorrido</a><a href="./#proyecto">Proyecto</a><a href="galeria.html" aria-current="page">Galería</a></nav>
+  </div>
+  <div class="in gutter"><div class="wrap">
+    <span class="eyebrow">Elysian Private Estates · Mayto</span>
+    <h1>Galería</h1>
+    <p>Una misma planta en tres colores. Toca una imagen para verla completa y cambia de color sin salir de la habitación.</p>
+  </div></div>
+</header>
+
+<div class="tabs gutter" role="group" aria-label="Filtrar por villa"><div class="wrap">
+  <button class="tab" type="button" data-f="all" aria-pressed="true">Todas</button>
+  <button class="tab" type="button" data-f="rosa" aria-pressed="false"><i style="background:var(--rosea)"></i>Rosea</button>
+  <button class="tab" type="button" data-f="verde" aria-pressed="false"><i style="background:var(--viridis)"></i>Viridis</button>
+  <button class="tab" type="button" data-f="azul" aria-pressed="false"><i style="background:var(--caerulea)"></i>Caerulea</button>
+</div></div>
+
+<main class="gutter"><div class="wrap" id="villas"></div></main>
+<footer class="foot gutter">Imágenes generadas a partir del modelo 3D de la planta tipo; son ilustrativas. · <a href="./">Volver a Elysian</a></footer>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Imagen ampliada" aria-hidden="true">
+  <div class="vw-top gutter">
+    <div class="vw-cap" id="vwCap"><b></b><span></span></div>
+    <button class="vw-close" type="button" id="vwClose" aria-label="Cerrar">×</button>
+  </div>
+  <div class="vw-stage" id="vwStage">
+    <img id="vwImg" alt="">
+    <button class="vw-nav prev" type="button" id="vwPrev" aria-label="Anterior">‹</button>
+    <button class="vw-nav next" type="button" id="vwNext" aria-label="Siguiente">›</button>
+  </div>
+  <div class="vw-bot gutter">
+    <div class="vw-colors" id="vwColors" role="group" aria-label="Ver esta habitación en otro color"></div>
+    <span class="vw-count" id="vwCount"></span>
+  </div>
+</div>
+
+<script>
+(() => {
+  const VILLAS = [
+    {id:'rosa', name:'Rosea', color:'var(--rosea)', note:'Estuco rosa barro · travertino · fresno · zellige rosa'},
+    {id:'verde', name:'Viridis', color:'var(--viridis)', note:'Estuco verde salvia · travertino · fresno · zellige salvia'},
+    {id:'azul', name:'Caerulea', color:'var(--caerulea)', note:'Concreto azul · travertino · fresno · zellige azul'},
+  ];
+  // the same rooms exist in every villa, so the viewer can swap colour and keep the room
+  const WIDE = [
+    ['03-fachada-mar', 'Fachada al mar', 'Galería de arcos sobre la ladera'],
+    ['04-dron', 'Vista aérea', 'Implantación en la ladera'],
+    ['01-llegada', 'Llegada', 'Estacionamiento de grava y fachada de acceso'],
+    ['02-patio', 'Patio', 'Puerta de parota y ventanas redondas'],
+    ['07-cocina', 'Cocina · comedor', 'Isla de piedra y mesa de roble'],
+    ['05-estancia', 'Estancia', 'Dos arcos hacia el Pacífico'],
+    ['06-recamara', 'Recámara principal', 'Vista al mar entre dos arcos'],
+    ['08-tv', 'La planta en pantalla', 'Lámina A-01 en la estancia'],
+  ];
+  const TALL = [
+    ['v1-fachada-mar', 'Fachada al mar'], ['v2-llegada', 'Llegada'], ['v3-patio', 'Patio'], ['v4-cocina', 'Cocina'],
+    ['v5-recamara', 'Recámara'], ['v6-estancia', 'Estancia'], ['v7-tv', 'La planta en pantalla'],
+  ];
+  const src = (v, k, thumb) => `media/galeria/${v}/${k}${thumb ? '-t' : ''}.jpg`;
+
+  const host = document.getElementById('villas');
+  const items = []; // every tile in page order: {v, k, title, sub, tall, el}
+  VILLAS.forEach(V => {
+    const sec = document.createElement('section');
+    sec.className = 'villa'; sec.dataset.v = V.id; sec.setAttribute('aria-labelledby', `h-${V.id}`);
+    sec.innerHTML = `<div class="v-head"><h2 id="h-${V.id}"><span class="sw" style="background:${V.color}"></span>${V.name}</h2><p>${V.note}</p></div>
+      <div class="grid"></div><p class="eyebrow tall-h">Formato vertical</p><div class="row"></div>`;
+    const add = (box, k, title, sub, tall) => {
+      const fig = document.createElement('figure'); fig.style.margin = 0;
+      const b = document.createElement('button'); b.className = 'tile'; b.type = 'button';
+      b.setAttribute('aria-label', `${V.name}: ${title}. Ver completa`);
+      b.innerHTML = `<img src="${src(V.id, k, true)}" alt="${V.name}, ${title.toLowerCase()}${sub ? ': ' + sub.toLowerCase() : ''}." loading="lazy" decoding="async" width="${tall ? 480 : 720}" height="${tall ? 860 : 402}"><figcaption>${title}</figcaption>`;
+      fig.appendChild(b); box.appendChild(fig);
+      const it = {v:V.id, k, title, sub, tall, el:sec}; items.push(it);
+      b.addEventListener('click', () => open(items.indexOf(it)));
+    };
+    WIDE.forEach(([k, t, s]) => add(sec.querySelector('.grid'), k, t, s, false));
+    TALL.forEach(([k, t]) => add(sec.querySelector('.row'), k, t, '', true));
+    host.appendChild(sec);
+  });
+
+  // filter tabs
+  let filter = 'all';
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    filter = t.dataset.f;
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-pressed', String(x === t)));
+    document.querySelectorAll('.villa').forEach(s => { s.hidden = filter !== 'all' && s.dataset.v !== filter; });
+    const tabs = document.querySelector('.tabs');
+    if (tabs.getBoundingClientRect().top <= 0) scrollTo({top: tabs.offsetTop, behavior: 'smooth'});
+  }));
+
+  // viewer
+  const viewer = document.getElementById('viewer'), img = document.getElementById('vwImg'), cap = document.getElementById('vwCap');
+  const count = document.getElementById('vwCount'), colors = document.getElementById('vwColors'), stage = document.getElementById('vwStage');
+  let cur = -1, lastFocus = null;
+  const visible = () => items.filter(it => !it.el.hidden);
+  VILLAS.forEach(V => {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.v = V.id;
+    b.innerHTML = `<i class="sw" style="background:${V.color}"></i>${V.name}`;
+    b.addEventListener('click', () => { const it = items[cur]; show(items.findIndex(x => x.v === V.id && x.k === it.k)); });
+    colors.appendChild(b);
+  });
+  function show(i){
+    cur = i; const it = items[i], V = VILLAS.find(x => x.id === it.v), list = visible();
+    img.classList.add('swap');
+    img.src = src(it.v, it.k, true);          // the thumbnail is cached: show it at once, then the full image
+    const full = new Image(); full.onload = () => { if (cur === i){ img.src = full.src; img.classList.remove('swap'); } };
+    full.src = src(it.v, it.k, false);
+    img.alt = `${V.name}, ${it.title.toLowerCase()}.`;
+    cap.querySelector('b').textContent = `${V.name} · ${it.title}`;
+    cap.querySelector('span').textContent = it.sub || (it.tall ? 'Formato vertical' : '');
+    count.textContent = `${list.indexOf(it) + 1} / ${list.length}`;
+    colors.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === it.v)));
+    // preload the neighbours so swiping feels instant
+    [1, -1].forEach(d => { const n = list[(list.indexOf(it) + d + list.length) % list.length]; new Image().src = src(n.v, n.k, false); });
+  }
+  function open(i){
+    lastFocus = document.activeElement; show(i);
+    viewer.classList.add('on'); viewer.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    document.getElementById('vwClose').focus();
+  }
+  function close(){
+    viewer.classList.remove('on'); viewer.setAttribute('aria-hidden', 'true'); document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  function step(d){ const list = visible(), j = list.indexOf(items[cur]); show(items.indexOf(list[(j + d + list.length) % list.length])); }
+  document.getElementById('vwClose').addEventListener('click', close);
+  document.getElementById('vwPrev').addEventListener('click', () => step(-1));
+  document.getElementById('vwNext').addEventListener('click', () => step(1));
+  addEventListener('keydown', e => {
+    if (!viewer.classList.contains('on')) return;
+    if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') step(1); else if (e.key === 'ArrowLeft') step(-1);
+  });
+  stage.addEventListener('click', e => { if (e.target === stage) close(); });
+  let sx = null, sy = 0;
+  stage.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse'){ sx = e.clientX; sy = e.clientY; } });
+  stage.addEventListener('pointerup', e => {
+    if (sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+  });
+  stage.addEventListener('pointercancel', () => { sx = null; });
+})();
+</script>
