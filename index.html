@@ -77,6 +77,9 @@ button{font:inherit;color:inherit}
   -webkit-background-clip:text;background-clip:text;clip-path:inset(0 calc(100% - var(--p, 0%)) 0 0);transition:clip-path .3s linear}
 .ld-sub{font-family:var(--f-mayto);font-style:italic;font-weight:500;font-size:clamp(18px,2vw,26px);letter-spacing:.06em;color:#eadbd0}
 .ld-pct{font:500 13px/1 var(--f-mono);letter-spacing:.16em;color:#bfae9f;font-variant-numeric:tabular-nums;margin-top:10px}
+.ld-enter{margin-top:6px;background:none;border:1px solid rgba(247,239,232,.55);border-radius:2px;padding:14px 30px;cursor:pointer;font:600 12px/1 var(--f-body);letter-spacing:.24em;text-transform:uppercase;color:#f7efe8;animation:ld-in .6s ease both}
+.ld-enter:hover{background:rgba(247,239,232,.08)}
+@keyframes ld-in{from{opacity:0;translate:0 8px}}
 .ld-note{font:500 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:#8d7a73;min-height:11px}
 @media (prefers-reduced-motion: reduce){ .ld-fill{transition:none} }
 
@@ -205,13 +208,14 @@ table.areas tr.total td{font-weight:600}
 <div class="loader" id="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Cargando Elysian">
   <div class="ld-word" aria-hidden="true"><span class="ld-outline">ELYSIAN</span><span class="ld-fill">ELYSIAN</span></div>
   <div class="ld-sub">Residences by Mayto</div>
-  <div class="ld-pct"><span id="ldPct">0</span>%</div>
+  <div class="ld-pct" id="ldPctBox"><span id="ldPct">0</span>%</div>
+  <button class="ld-enter" id="ldEnter" type="button" hidden>Entrar</button>
   <div class="ld-note" id="ldNote"></div>
 </div>
 
 <!-- ===================== LANDING ===================== -->
 <header class="landing" id="inicio">
-  <video class="fill-video" id="flight" muted playsinline preload="none" poster="media/landing-first.jpg"></video>
+  <video class="fill-video" id="flight" muted playsinline preload="auto" poster="media/landing-first.jpg"></video>
   <img class="fill-video" id="flightEnd" src="media/landing-last.jpg" alt="Las villas Rosea, Viridis y Caerulea de Elysian sobre una ladera de selva baja con vista al Pacífico." hidden>
   <div class="l-top gutter">
     <span class="mark">ELYSIAN</span>
@@ -518,7 +522,7 @@ table.areas tr.total td{font-weight:600}
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
   // ---------- loader: fills ELYSIAN with the three villa colours as the bytes arrive ----------
-  const loader = $('loader'), ldPct = $('ldPct'), ldNote = $('ldNote');
+  const loader = $('loader'), ldPct = $('ldPct'), ldNote = $('ldNote'), ldEnter = $('ldEnter');
   function showLoad(p, note){
     const v = clamp(Math.round(p), 0, 100);
     loader.style.setProperty('--p', v + '%'); ldPct.textContent = v; loader.setAttribute('aria-valuenow', v);
@@ -577,12 +581,27 @@ table.areas tr.total td{font-weight:600}
     const total = files.reduce((a, f) => a + f[1], 0), frac = files.map(() => 0);
     const got = files.map(([url], i) => fetchBlob(url, f => { frac[i] = f; showLoad(files.reduce((a, g, j) => a + g[1] * frac[j], 0) / total * 97); }));
     ['rosa', 'verde', 'azul'].forEach((v, i) => { pending[v] = got[i + 1].then(u => (blobs[v] = u)); });
-    flight.src = await got[0];
+    flight.src = await got[0]; flight.load();
     await Promise.all(got);
     await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
     showLoad(100);
-    setTimeout(() => { loader.classList.add('done'); if (reduce) landed(); else flight.play().catch(landed); }, 500);
+    await new Promise(r => setTimeout(r, 500)); // let the colours finish filling the word
+    if (reduce){ loader.classList.add('done'); landed(); return; }
+    // Phones may refuse to start video on their own (iPhone Low Power Mode, data saver). Start the flight behind the
+    // loader and check it really moves; if not, keep the loader up with an "Entrar" button: a tap always may play.
+    if (await flightStarts()){ flight.currentTime = 0; loader.classList.add('done'); return; }
+    $('ldPctBox').hidden = true; ldNote.textContent = ''; ldEnter.hidden = false; ldEnter.focus();
   })();
+  async function flightStarts(){
+    try { flight.currentTime = 0; await flight.play(); } catch (e) { return false; }
+    for (let i = 0; i < 20; i++){ if (flight.currentTime > .1) return true; await new Promise(r => setTimeout(r, 100)); }
+    flight.pause(); return false;
+  }
+  ldEnter.addEventListener('click', () => {
+    flight.currentTime = 0;
+    flight.play().catch(landed);
+    loader.classList.add('done');
+  });
   $('replayFlight').addEventListener('click', () => { landing.classList.remove('ready'); flightEnd.hidden = true; flight.currentTime = 0; flight.play().catch(landed); });
   document.querySelectorAll('[data-villa]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); enterVilla(b.dataset.villa); }));
 
